@@ -1,11 +1,13 @@
 package de.htwsaar.kim.ava.avanode.file;
 
+
 import de.htwsaar.kim.ava.avanode.dot.Dot;
 import de.htwsaar.kim.ava.avanode.dot.Edge;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -114,10 +116,59 @@ public class FileConfig {
         return neighbors;
     }
 
+    private static int generateRandomInt(int min, int max, ArrayList<Integer> excludeRows) {
+        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
+        while(excludeRows.contains(random)) {
+            random = ThreadLocalRandom.current().nextInt(min, max + 1);
+        }
+        return random;
+    }
 
+    public static void genElectionDotFile(int numOfParticpants, int numOfPartyFellows, int numOfFriends) throws FileNotFoundException, UnsupportedEncodingException {
+
+        int cand1 = 1;
+        int cand2 = 2;
+
+        //Conditions
+        boolean cond1 = 2*numOfPartyFellows > numOfParticpants;
+        boolean cond2 = numOfPartyFellows > numOfParticpants;
+
+        Dot dot = new Dot();
+
+        //Party fellows
+        for (int i = 3; i<3+numOfPartyFellows; i++) {
+            dot.addEdge(new Edge(cand1, i));
+            dot.addEdge(new Edge(cand2, i+numOfPartyFellows));
+        }
+
+        //Establish Friendships
+       for (int i= 3; i<=numOfParticpants; i++) {
+            //Fill with Random nodes
+            while (dot.getNumOfAdjacentNodes(i) < numOfFriends) {
+                ArrayList<Integer> excluded = new ArrayList<>();
+                excluded.add(i);
+
+                int randNode = generateRandomInt(3, numOfParticpants, excluded);
+
+                if (dot.getNumOfAdjacentNodes(randNode) < numOfFriends) {
+                    dot.addEdge(new Edge(i, randNode));
+                }
+            }
+
+       }
+
+        writeToFile("file.dot", dot);
+
+    }
 
     public static void genDotFile(int nodes, int edges) throws IOException {
         genDotFile(nodes, edges, "file.dot");
+    }
+
+    private static void writeToFile(String fileName, Dot dot) throws FileNotFoundException, UnsupportedEncodingException {
+        try (PrintWriter writer = new PrintWriter(fileName, "UTF-8")) {
+            writer.print(dot);
+        }
     }
 
     public static void genDotFile(int nodes, int edges, String fileName) throws IOException {
@@ -178,9 +229,7 @@ public class FileConfig {
             }
 
 
-            try (PrintWriter writer = new PrintWriter(fileName, "UTF-8")) {
-                writer.print(dot);
-            }
+            writeToFile(fileName, dot);
 
         }
 
@@ -194,6 +243,14 @@ public class FileConfig {
                 writer.println(Integer.toString(i) + " 127.0.0.1 " + Integer.toString(5000 + i));
         }
 
+    }
+
+    public static void main(String ...args) throws FileNotFoundException, UnsupportedEncodingException {
+        genElectionDotFile(
+                100,
+                6,
+                3
+        );
     }
 
 
