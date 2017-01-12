@@ -23,7 +23,11 @@ public class MakeAVAGreatAgain {
         System.out.println("Initiating Candidates.");
 
         FileConfig.genConfigFile(100);
-        FileConfig.genDotFile(100, 120);
+        FileConfig.genElectionDotFile(
+                100,
+                6,
+                3
+        );
 
         NodeCore cand1 = new NodeCore(1);
         NodeCore cand2 = new NodeCore(2);
