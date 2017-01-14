@@ -8,6 +8,7 @@ import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply200;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /*
  * WEITER-SO
@@ -27,8 +28,7 @@ public class APPROVE implements Command{
             throw new CommandExecutionErrorException("This command is not allowed for this node type.");
         }
 
-
-
+        protocol.getNodeCore().getLogger().log(Level.INFO, "APPROVAL Recevied!");
 
         return new Reply200(new HashMap<String, String>() {{
 

@@ -31,7 +31,7 @@ public class DataStore {
         return confidenceLevel.get(candId);
     }
 
-    public synchronized void setConfidenceLevel(int candId, int confidenceLevel) {
+    public void setConfidenceLevel(int candId, int confidenceLevel) {
         if (confidenceLevel > 100)
             confidenceLevel = 100;
         if (confidenceLevel < 0)
