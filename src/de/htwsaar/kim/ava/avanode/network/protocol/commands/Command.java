@@ -28,6 +28,10 @@ public interface Command {
                 return new UNKNOWN();
             case "VOTEFORME":
                 return new VOTEFORME();
+            case "STARTVOTEFORME":
+                return new STARTVOTEFORME();
+            case "SHUTDOWN":
+                return new SHUTDOWN();
             default:
                 return new UNKNOWN();
         }

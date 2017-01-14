@@ -4,7 +4,6 @@ import de.htwsaar.kim.ava.avanode.application.NodeCore;
 import de.htwsaar.kim.ava.avanode.application.NodeType;
 import de.htwsaar.kim.ava.avanode.file.FileConfig;
 
-import javax.xml.soap.Node;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -29,11 +28,18 @@ public class MakeAVAGreatAgain {
                 3
         );
 
+        NodeCore[] nodes = new NodeCore[1000];
+
         NodeCore cand1 = new NodeCore(1);
         NodeCore cand2 = new NodeCore(2);
 
         cand1.setNodeType(NodeType.CANDIDATE);
         cand2.setNodeType(NodeType.CANDIDATE);
+
+        cand1.getDataStore().setConfidenceLevel(1, 100);
+        cand1.getDataStore().setConfidenceLevel(2, 0);
+        cand2.getDataStore().setConfidenceLevel(1, 0);
+        cand2.getDataStore().setConfidenceLevel(2, 100);
 
         cand1.startNode();
         cand2.startNode();
@@ -42,12 +48,22 @@ public class MakeAVAGreatAgain {
 
         for (int i = 3; i <= 100; i++) {
             NodeCore node = new NodeCore(i);
+            nodes[i] = node;
             node.setNodeType(NodeType.VOTER);
             node.getDataStore().setConfidenceLevel(1, rand.nextInt(100));
             node.getDataStore().setConfidenceLevel(2, rand.nextInt(100));
             node.startNode();
         }
 
+        for (int i = 3; i<=8; i++) {
+            nodes[i].getDataStore().setConfidenceLevel(1, 100);
+            nodes[i].getDataStore().setConfidenceLevel(2, 0);
+        }
+
+        for (int i = 9; i<=14; i++) {
+            nodes[i].getDataStore().setConfidenceLevel(2, 100);
+            nodes[i].getDataStore().setConfidenceLevel(1, 0);
+        }
 
 
         System.out.println("Political System started.");
