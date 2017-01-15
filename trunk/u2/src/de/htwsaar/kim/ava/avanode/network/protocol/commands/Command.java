@@ -30,6 +30,8 @@ public interface Command {
                 return new VOTEFORME();
             case "STARTVOTEFORME":
                 return new STARTVOTEFORME();
+            case "STARTCAMPAIGN":
+                return new STARTCAMPAIGN();
             case "SHUTDOWN":
                 return new SHUTDOWN();
             default:
