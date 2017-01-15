@@ -23,7 +23,7 @@ public static void main(String... args) throws Throwable {
     List<NodeCore> nodes = new LinkedList<NodeCore>();
 
     for (int i = 1; i <= max ; i++) {
-        NodeCore node = new NodeCore(i);
+        NodeCore node = new NodeCore(i, 100);
         node.startNode();
         nodes.add(node);
     }

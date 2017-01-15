@@ -4,11 +4,13 @@ import de.htwsaar.kim.ava.avanode.file.FileConfig;
 import de.htwsaar.kim.ava.avanode.logging.SingleLineFormatter;
 import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
 import de.htwsaar.kim.ava.avanode.network.server.TCPParallelServer;
+import de.htwsaar.kim.ava.avanode.store.CampaignTeam;
 import de.htwsaar.kim.ava.avanode.store.DataStore;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -26,18 +28,19 @@ public class NodeCore {
     private Logger logger;
     private NodeType nodeType = NodeType.UNKNOWN;
 
-    public NodeCore(int nodeId) throws IOException {
+    public NodeCore(int nodeId, int feedbackThreshold) throws IOException {
         this.nodeId = nodeId;
         fileConfig = new FileConfig(this.nodeId, "file.txt", "file.dot");
         tcpParallelServer = new TCPParallelServer(this);
         tcpClient = new TCPClient(this);
-        dataStore = new DataStore();
+        dataStore = new DataStore(feedbackThreshold);
 
         logger = Logger.getLogger(String.valueOf(nodeId));
         Handler handler = new ConsoleHandler();
         handler.setFormatter(new SingleLineFormatter());
         logger.setUseParentHandlers(false);
         logger.addHandler(handler);
+        logger.setLevel(Level.INFO);
     }
 
 

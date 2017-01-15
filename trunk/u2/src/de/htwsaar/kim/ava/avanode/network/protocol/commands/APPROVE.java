@@ -1,12 +1,12 @@
 package de.htwsaar.kim.ava.avanode.network.protocol.commands;
 
 import de.htwsaar.kim.ava.avanode.application.NodeType;
-import de.htwsaar.kim.ava.avanode.exception.ClientErrorException;
 import de.htwsaar.kim.ava.avanode.exception.CommandExecutionErrorException;
 import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply200;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -28,7 +28,9 @@ public class APPROVE implements Command{
             throw new CommandExecutionErrorException("This command is not allowed for this node type.");
         }
 
-        protocol.getNodeCore().getLogger().log(Level.INFO, "APPROVAL Recevied!");
+        int source = protocol.getSource();
+
+        protocol.getNodeCore().getDataStore().getFeedbackManager().incrementFeedback();
 
         return new Reply200(new HashMap<String, String>() {{
 

@@ -1,6 +1,8 @@
 package de.htwsaar.kim.ava.avanode.store;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by markus on 28.12.16.
@@ -8,7 +10,19 @@ import java.util.HashMap;
 public class DataStore {
 
     private HashMap<String, Rumor> rumors = new HashMap<>();
-    private HashMap<Integer, Integer> confidenceLevel = new HashMap<>();
+    private List<Integer> voteForMeIds = new LinkedList<>();
+    private int counter = 0;
+    private int cand1Confidence = 0;
+    private int cand2Confidence = 0;
+
+
+    private FeedbackManager feedbackManager;
+
+
+    public DataStore(int feedbackThreshold) {
+        feedbackManager = new FeedbackManager(feedbackThreshold);
+
+    }
 
     public void addRumor(String rumor, int source) {
         if (rumors.containsKey(rumor)) {
@@ -27,20 +41,53 @@ public class DataStore {
         return this.rumors.get(rumor);
     }
 
-    public int getConfidenceLevel(int candId) {
-        return confidenceLevel.get(candId);
+
+    public void addVoteForMeId(int identifier) {
+        voteForMeIds.add(identifier);
     }
 
-    public void setConfidenceLevel(int candId, int confidenceLevel) {
+    public boolean alreadySeenVotForMe(int identifier) {
+        return voteForMeIds.contains(identifier);
+    }
+
+    public void incrementCounter() {
+        counter++;
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+
+    public int getConfidenceLevel(int candId) {
+        switch(candId) {
+            case 1:
+                return cand1Confidence;
+            case 2:
+                return cand2Confidence;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    public synchronized void setConfidenceLevel(int candId, int confidenceLevel) {
         if (confidenceLevel > 100)
             confidenceLevel = 100;
         if (confidenceLevel < 0)
             confidenceLevel = 0;
-        this.confidenceLevel.put(candId, confidenceLevel);
+
+        switch(candId) {
+            case 1:
+                cand1Confidence = confidenceLevel;
+                return;
+            case 2:
+                cand2Confidence = confidenceLevel;
+                return;
+        }
     }
 
-    public synchronized void increaseByFractionOfItself(int candid, int denom) {
-        int confidenceLevel = this.confidenceLevel.get(candid);
+    public void increaseConfidenceByFractionOfItself(int candid, int denom) {
+        int confidenceLevel = getConfidenceLevel(candid);
         confidenceLevel = (confidenceLevel/denom)+confidenceLevel;
 
         if (confidenceLevel > 100)
@@ -49,6 +96,10 @@ public class DataStore {
         if (confidenceLevel < 0)
             confidenceLevel = 0;
 
-        this.confidenceLevel.put(candid, confidenceLevel);
+        setConfidenceLevel(candid, confidenceLevel);
+    }
+
+    public FeedbackManager getFeedbackManager() {
+        return feedbackManager;
     }
 }
