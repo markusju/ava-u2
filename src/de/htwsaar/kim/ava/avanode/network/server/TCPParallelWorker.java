@@ -36,7 +36,7 @@ public class TCPParallelWorker implements Runnable {
      * Run - method of the Worker
      */
     public void run() {
-        nodeCore.getLogger().log(Level.INFO, "Worker spawned. Client connected: "+socket.getInetAddress().toString());
+        nodeCore.getLogger().log(Level.FINE, "Worker spawned. Client connected: "+socket.getInetAddress().toString());
         try {
 
             new AvaNodeProtocol(socket, nodeCore).run();
@@ -46,7 +46,7 @@ public class TCPParallelWorker implements Runnable {
                 nodeCore.getLogger().log(Level.SEVERE, "Worker could not process the request!", e);
         }
 
-        nodeCore.getLogger().log(Level.INFO, "Worker finished.");
+        nodeCore.getLogger().log(Level.FINE, "Worker finished.");
 
     }
 

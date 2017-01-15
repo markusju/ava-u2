@@ -14,6 +14,7 @@ import de.htwsaar.kim.ava.avanode.network.protocol.requests.Request;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Created by markus on 25.12.16.
@@ -56,11 +57,14 @@ public class AvaNodeProtocol extends AbstractBaseProtocol implements Runnable {
             request = new AvaNodeProtocolRequest(this);
 
 
+
             //Semantische Analyse
             Command command = Command.interpretRequest(request);
 
             checkRequest();
             source = Integer.valueOf(request.getParameters().get("SRC"));
+
+            getNodeCore().getLogger().log(Level.INFO, "Request '"+request.getMethod()+"' from "+source);
 
             //Evaluierung
             Reply reply = command.execute(this);

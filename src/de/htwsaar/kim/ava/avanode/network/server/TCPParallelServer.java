@@ -63,7 +63,7 @@ public class TCPParallelServer extends Thread {
                     Socket client = socket.accept();
                     //Connection Timeout
                     client.setSoTimeout(timeout);
-                    nodeCore.getLogger().log(Level.INFO, "Neuer Client verbunden: " + client.getInetAddress().toString());
+                    nodeCore.getLogger().log(Level.FINE, "Neuer Client verbunden: " + client.getInetAddress().toString());
                     TCPParallelWorker worker = new TCPParallelWorker(client, nodeCore);
                     workerList.add(worker);
                     workerPool.execute(worker);

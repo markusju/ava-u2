@@ -2,11 +2,14 @@ package de.htwsaar.kim.ava.avanode.network.client;
 
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 import de.htwsaar.kim.ava.avanode.network.protocol.AbstractBaseProtocol;
+import de.htwsaar.kim.ava.avanode.network.protocol.requests.AvaNodeProtocolRequest;
 import de.htwsaar.kim.ava.avanode.network.protocol.requests.Request;
 
 import javax.xml.soap.Node;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Created by markus on 27.12.16.
@@ -39,5 +42,37 @@ public class TCPClient {
     }
 
 
+    public static void sendAPPROVE(TCPClient tcpClient, String host, int port) throws IOException {
+        tcpClient.sendRequest(
+                host,
+                port,
+                genApprove()
+        );
+    }
 
+
+    public static void sendREJECT(TCPClient tcpClient, String host, int port) throws IOException {
+        tcpClient.sendRequest(
+                host,
+                port,
+                genReject()
+        );
+    }
+
+
+    private static AvaNodeProtocolRequest genReject() {
+        return new AvaNodeProtocolRequest(
+                "REJECT",
+                new LinkedList<String>(),
+                new HashMap<String, String>()
+        );
+    }
+
+    private static AvaNodeProtocolRequest genApprove() {
+        return new AvaNodeProtocolRequest(
+                "APPROVE",
+                new LinkedList<String>(),
+                new HashMap<String, String>()
+        );
+    }
 }

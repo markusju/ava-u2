@@ -29,6 +29,9 @@ public class STARTVOTEFORME implements Command {
         }
 
         Set<FileEntry> neighbors = protocol.getNodeCore().getFileConfig().getNeighbors();
+        int counter = protocol.getNodeCore().getDataStore().getCounter();
+        int id = Integer.valueOf(String.valueOf(protocol.getNodeCore().getNodeId())+String.valueOf(counter));
+        protocol.getNodeCore().getDataStore().incrementCounter();
 
         for (FileEntry partyFellow: neighbors) {
             try {
@@ -41,6 +44,7 @@ public class STARTVOTEFORME implements Command {
                                     add(String.valueOf(protocol.getNodeCore().getFileConfig().getOwnId()));
                                 }}),
                                 (new HashMap<String, String>() {{
+                                    put("ID", String.valueOf(id));
                                 }})
                         )
                 );
