@@ -3,6 +3,7 @@ package de.htwsaar.kim.ava.avanode.network.protocol.commands;
 import de.htwsaar.kim.ava.avanode.application.NodeType;
 import de.htwsaar.kim.ava.avanode.exception.CommandExecutionErrorException;
 import de.htwsaar.kim.ava.avanode.file.FileEntry;
+import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
 import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply200;
@@ -10,7 +11,6 @@ import de.htwsaar.kim.ava.avanode.network.protocol.requests.AvaNodeProtocolReque
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -25,23 +25,6 @@ public class VOTEFORME implements Command {
     }
 
 
-
-    private static AvaNodeProtocolRequest genReject() {
-        return new AvaNodeProtocolRequest(
-                "REJECT",
-                new LinkedList<String>(),
-                new HashMap<String, String>()
-        );
-    }
-
-    private static AvaNodeProtocolRequest genApprove() {
-        return new AvaNodeProtocolRequest(
-                "APPROVE",
-                new LinkedList<String>(),
-                new HashMap<String, String>()
-        );
-    }
-
     @Override
     public Reply execute(AvaNodeProtocol protocol) throws CommandExecutionErrorException {
         if (protocol.getNodeCore().getNodeType() != NodeType.VOTER) {
@@ -51,60 +34,44 @@ public class VOTEFORME implements Command {
         List<String> messageList = protocol.getRequest().getMethodArguments();
         if (messageList.size() != 1)
             throw new CommandExecutionErrorException("No Candidate ID found.");
+
         int candId = Integer.valueOf(messageList.get(0));
         int source = protocol.getSource();
+        int identifier = Integer.valueOf(protocol.getRequest().getParameters().get("ID"));
 
+        if (protocol.getNodeCore().getDataStore().alreadySeenVotForMe(identifier)) {
+            protocol.getNodeCore().getLogger().log(Level.INFO, "Not relaying. I have seen this VOTEFORME already.");
+            return new Reply200(new HashMap<>());
+        }
+
+        protocol.getNodeCore().getDataStore().addVoteForMeId(identifier);
 
         //Check confidence...
-
-        protocol.getNodeCore().getDataStore().increaseByFractionOfItself(candId, 10);
+        protocol.getNodeCore().getDataStore().increaseConfidenceByFractionOfItself(candId, 10);
 
         int confidenceCand1 = protocol.getNodeCore().getDataStore().getConfidenceLevel(1);
         int confidenceCand2 = protocol.getNodeCore().getDataStore().getConfidenceLevel(2);
 
-        if (candId == 1) {
             //Ich vertraue dem anderen Kandidaten mehr...
-            if (confidenceCand2 > confidenceCand1) {
-                try {
-                    protocol.getNodeCore().getTcpClient().sendRequest(
-                            protocol.getNodeCore().getFileConfig().getEntryById(1).getHost(),
-                            protocol.getNodeCore().getFileConfig().getEntryById(1).getPort(),
-                            genReject()
+            if (candId == 1 && (confidenceCand2 > confidenceCand1) ||
+                    candId == 2 && (confidenceCand1 > confidenceCand2)) {
 
-                    );
+                protocol.getNodeCore().getLogger().log(Level.INFO, "Not relaying. Confidence for "+candId+" to low");
+                try {
+                    TCPClient.sendREJECT(protocol.getNodeCore().getTcpClient(),
+                            protocol.getNodeCore().getFileConfig().getEntryById(candId).getHost(),
+                            protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 return new Reply200(new HashMap<>());
             }
-        }
-
-        if (candId == 2) {
-            //Ich vertraue dem anderen Kandidaten mehr...
-            if (confidenceCand1 > confidenceCand2) {
-                try {
-                    protocol.getNodeCore().getTcpClient().sendRequest(
-                            protocol.getNodeCore().getFileConfig().getEntryById(2).getHost(),
-                            protocol.getNodeCore().getFileConfig().getEntryById(2).getPort(),
-                            genReject()
-
-                    );
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return new Reply200(new HashMap<>());
-            }
-
-        }
-
 
         //Signal Approval
-
         try {
-            protocol.getNodeCore().getTcpClient().sendRequest(
+            TCPClient.sendAPPROVE(protocol.getNodeCore().getTcpClient(),
                     protocol.getNodeCore().getFileConfig().getEntryById(candId).getHost(),
-                    protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort(),
-                    genApprove()
+                    protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort()
             );
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,7 +94,7 @@ public class VOTEFORME implements Command {
                                     entry.getHost(),
                                     entry.getPort(),
                                     new AvaNodeProtocolRequest("VOTEFORME", messageList, new HashMap<String, String>() {{
-                                        //put("VECTIME", String.valueOf(protocol.getNodeCore().getFileConfig().getOwnEntry().getVectorTime()));
+                                        put("ID", String.valueOf(identifier));
                                     }})
                             );
                         } catch (IOException e) {
