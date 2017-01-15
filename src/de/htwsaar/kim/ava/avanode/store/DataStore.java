@@ -1,5 +1,7 @@
 package de.htwsaar.kim.ava.avanode.store;
 
+import de.htwsaar.kim.ava.avanode.application.NodeCore;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,13 +17,16 @@ public class DataStore {
     private int cand1Confidence = 0;
     private int cand2Confidence = 0;
 
-
+    private CampaignManager campaignManager;
     private FeedbackManager feedbackManager;
 
+    private NodeCore nodeCore;
 
-    public DataStore(int feedbackThreshold) {
-        feedbackManager = new FeedbackManager(feedbackThreshold);
 
+    public DataStore(NodeCore nodeCore) {
+        this.nodeCore = nodeCore;
+        feedbackManager = new FeedbackManager(nodeCore);
+        campaignManager = new CampaignManager(nodeCore);
     }
 
     public void addRumor(String rumor, int source) {
@@ -40,7 +45,6 @@ public class DataStore {
     public Rumor getRumor(String rumor) {
         return this.rumors.get(rumor);
     }
-
 
     public void addVoteForMeId(int identifier) {
         voteForMeIds.add(identifier);
@@ -97,6 +101,10 @@ public class DataStore {
             confidenceLevel = 0;
 
         setConfidenceLevel(candid, confidenceLevel);
+    }
+
+    public CampaignManager getCampaignManager() {
+        return campaignManager;
     }
 
     public FeedbackManager getFeedbackManager() {

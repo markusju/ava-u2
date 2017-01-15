@@ -1,5 +1,7 @@
 package de.htwsaar.kim.ava.avanode.store;
 
+import de.htwsaar.kim.ava.avanode.application.NodeCore;
+
 import java.util.LinkedList;
 
 /**
@@ -12,8 +14,8 @@ public class FeedbackManager {
     private LinkedList<FeedbackObserver> feedbackObservers = new LinkedList<>();
 
 
-    public FeedbackManager(int threshold) {
-        this.threshold = threshold;
+    public FeedbackManager(NodeCore nodeCore) {
+        this.threshold = nodeCore.getFeedbackThreshold();
     }
 
 

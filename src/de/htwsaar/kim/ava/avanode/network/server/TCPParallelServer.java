@@ -31,7 +31,7 @@ public class TCPParallelServer extends Thread {
     private List<ServerStatusObserver> serverStatusObservers = new LinkedList<>();
 
     //All Workers are pooled to avoid resource exhaustion
-    private static ExecutorService workerPool = Executors.newFixedThreadPool(MAX_NUM_THREADS);
+    private /*static*/ ExecutorService workerPool = Executors.newFixedThreadPool(MAX_NUM_THREADS);
     protected List<TCPParallelWorker> workerList = new LinkedList<>();
 
 

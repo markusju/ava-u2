@@ -4,7 +4,6 @@ import de.htwsaar.kim.ava.avanode.file.FileConfig;
 import de.htwsaar.kim.ava.avanode.logging.SingleLineFormatter;
 import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
 import de.htwsaar.kim.ava.avanode.network.server.TCPParallelServer;
-import de.htwsaar.kim.ava.avanode.store.CampaignTeam;
 import de.htwsaar.kim.ava.avanode.store.DataStore;
 
 import java.io.IOException;
@@ -27,13 +26,14 @@ public class NodeCore {
     private DataStore dataStore;
     private Logger logger;
     private NodeType nodeType = NodeType.UNKNOWN;
+    private int feedbackThreshold;
 
     public NodeCore(int nodeId, int feedbackThreshold) throws IOException {
         this.nodeId = nodeId;
         fileConfig = new FileConfig(this.nodeId, "file.txt", "file.dot");
         tcpParallelServer = new TCPParallelServer(this);
         tcpClient = new TCPClient(this);
-        dataStore = new DataStore(feedbackThreshold);
+        dataStore = new DataStore(this);
 
         logger = Logger.getLogger(String.valueOf(nodeId));
         Handler handler = new ConsoleHandler();
@@ -82,5 +82,9 @@ public class NodeCore {
 
     public void setNodeType(NodeType nodeType) {
         this.nodeType = nodeType;
+    }
+
+    public int getFeedbackThreshold() {
+        return feedbackThreshold;
     }
 }

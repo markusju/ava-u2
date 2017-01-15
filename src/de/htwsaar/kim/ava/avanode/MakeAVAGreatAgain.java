@@ -2,11 +2,8 @@ package de.htwsaar.kim.ava.avanode;
 
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 import de.htwsaar.kim.ava.avanode.application.NodeType;
-import de.htwsaar.kim.ava.avanode.file.FileConfig;
-import de.htwsaar.kim.ava.avanode.store.CampaignTeam;
+import de.htwsaar.kim.ava.avanode.store.FeedbackTeam;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -49,9 +46,9 @@ public class MakeAVAGreatAgain {
         cand2.getDataStore().setConfidenceLevel(1, 0);
         cand2.getDataStore().setConfidenceLevel(2, 100);
 
-        //Install CampaignTeam
-        CampaignTeam teamCand1 = new CampaignTeam(cand1);
-        CampaignTeam teamCand2 = new CampaignTeam(cand2);
+        //Install FeedbackTeam
+        FeedbackTeam teamCand1 = new FeedbackTeam(cand1);
+        FeedbackTeam teamCand2 = new FeedbackTeam(cand2);
 
         cand1.startNode();
         cand2.startNode();
