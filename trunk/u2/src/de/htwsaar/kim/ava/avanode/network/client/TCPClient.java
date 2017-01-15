@@ -59,6 +59,14 @@ public class TCPClient {
         );
     }
 
+    public static void sendCAMPAIGN(TCPClient tcpClient, String host, int port) throws IOException {
+        tcpClient.sendRequest(
+                host,
+                port,
+                genCampaign()
+        );
+    }
+
 
     private static AvaNodeProtocolRequest genReject() {
         return new AvaNodeProtocolRequest(
@@ -73,6 +81,14 @@ public class TCPClient {
                 "APPROVE",
                 new LinkedList<String>(),
                 new HashMap<String, String>()
+        );
+    }
+
+    private static AvaNodeProtocolRequest genCampaign() {
+        return new AvaNodeProtocolRequest(
+                "CAMPAIGN",
+                new LinkedList<>(),
+                new HashMap<>()
         );
     }
 }
