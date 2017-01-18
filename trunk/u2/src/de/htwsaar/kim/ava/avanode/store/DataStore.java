@@ -13,6 +13,7 @@ public class DataStore {
 
     private HashMap<String, Rumor> rumors = new HashMap<>();
     private List<Integer> voteForMeIds = new LinkedList<>();
+    private List<Integer> campaignIds = new LinkedList<>();
     private int counter = 0;
     private int cand1Confidence = 0;
     private int cand2Confidence = 0;
@@ -101,6 +102,32 @@ public class DataStore {
             confidenceLevel = 0;
 
         setConfidenceLevel(candid, confidenceLevel);
+    }
+
+    public void decrementConfidence(int candId) {
+        int confidenceLevel = getConfidenceLevel(candId);
+        confidenceLevel = confidenceLevel-1;
+
+        if (confidenceLevel > 100)
+            confidenceLevel = 100;
+
+        if (confidenceLevel < 0)
+            confidenceLevel = 0;
+
+        setConfidenceLevel(candId, confidenceLevel);
+    }
+
+    public void incrementConfidence(int candId) {
+        int confidenceLevel = getConfidenceLevel(candId);
+        confidenceLevel = confidenceLevel+1;
+
+        if (confidenceLevel > 100)
+            confidenceLevel = 100;
+
+        if (confidenceLevel < 0)
+            confidenceLevel = 0;
+
+        setConfidenceLevel(candId, confidenceLevel);
     }
 
     public CampaignManager getCampaignManager() {

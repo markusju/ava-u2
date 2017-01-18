@@ -17,6 +17,7 @@ public class MakeAVAGreatAgain {
     public static void main(String... args) throws Exception {
 
         System.out.println("Starting Political System. Please stand by.");
+        System.out.println("Making AVA Great Again!");
         System.out.println("Initiating Candidates.");
 
         //FileConfig.genConfigFile(100);
@@ -32,7 +33,6 @@ public class MakeAVAGreatAgain {
 
 
         //Candidates
-
         NodeCore cand1 = new NodeCore(1, feedbackThreshold);
         NodeCore cand2 = new NodeCore(2, feedbackThreshold);
 
@@ -55,6 +55,7 @@ public class MakeAVAGreatAgain {
 
         System.out.println("Initiating Constituents.");
 
+        //Constituency...
         for (int i = 3; i <= 100; i++) {
             NodeCore node = new NodeCore(i, feedbackThreshold);
             nodes[i] = node;
@@ -64,18 +65,18 @@ public class MakeAVAGreatAgain {
             node.startNode();
         }
 
+        //Establishing Confidence for Party Fellows of Candidate 1
         for (int i = 3; i<=8; i++) {
             nodes[i].getDataStore().setConfidenceLevel(1, 100);
             nodes[i].getDataStore().setConfidenceLevel(2, 0);
         }
-
+        //Establishing Confidence for Party Fellows of Candidate 1
         for (int i = 9; i<=14; i++) {
             nodes[i].getDataStore().setConfidenceLevel(2, 100);
             nodes[i].getDataStore().setConfidenceLevel(1, 0);
         }
 
-
-        System.out.println("Political System started.");
+        System.out.println("Political System successfully started.");
     }
 
 }

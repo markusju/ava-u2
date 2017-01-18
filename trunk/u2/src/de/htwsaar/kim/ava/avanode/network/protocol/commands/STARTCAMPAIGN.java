@@ -8,6 +8,8 @@ import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply200;
 import de.htwsaar.kim.ava.avanode.network.protocol.requests.AvaNodeProtocolRequest;
+import de.htwsaar.kim.ava.avanode.store.CampaignManager;
+import de.htwsaar.kim.ava.avanode.store.CampaignState;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,14 +33,23 @@ public class STARTCAMPAIGN implements Command {
             throw new CommandExecutionErrorException("This command is not allowed for this node type.");
         }
 
+        CampaignManager manager = protocol.getNodeCore().getDataStore().getCampaignManager();
+
+
+        if (manager.getCampaignState() != CampaignState.WHITE)
+            throw new CommandExecutionErrorException("Wrong State");
+
         Set<FileEntry> neighbors = protocol.getNodeCore().getFileConfig().getNeighbors();
         protocol.getNodeCore().getDataStore().incrementCounter();
+
+        manager.setCampaignState(CampaignState.RED);
 
         for (FileEntry partyFellow: neighbors) {
             try {
                 TCPClient.sendCAMPAIGN(protocol.getNodeCore().getTcpClient(),
                         partyFellow.getHost(),
-                        partyFellow.getPort()
+                        partyFellow.getPort(),
+                        protocol.getNodeCore().getNodeId()
                 );
             } catch (IOException e) {
                 e.printStackTrace();
