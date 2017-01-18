@@ -27,7 +27,6 @@ public class CampaignManager {
         this.campaignState = campaignState;
     }
 
-
     public void incrementMessageCounter() {
         messageCounter++;
     }
@@ -36,6 +35,9 @@ public class CampaignManager {
         return messageCounter;
     }
 
+    public void resetMessageCounter() {
+        messageCounter = 0;
+    }
 
     public int getFirstNeighbor() {
         return firstNeighbor;
