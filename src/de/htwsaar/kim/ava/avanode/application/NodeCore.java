@@ -34,6 +34,7 @@ public class NodeCore {
         tcpParallelServer = new TCPParallelServer(this);
         tcpClient = new TCPClient(this);
         dataStore = new DataStore(this);
+        this.feedbackThreshold = feedbackThreshold;
 
         logger = Logger.getLogger(String.valueOf(nodeId));
         Handler handler = new ConsoleHandler();

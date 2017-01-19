@@ -67,6 +67,30 @@ public class TCPClient {
         );
     }
 
+    public static void sendSTARTCAMPAIGN(TCPClient tcpClient, String host, int port) throws IOException {
+        tcpClient.sendRequest(
+                host,
+                port,
+                new AvaNodeProtocolRequest(
+                        "STARTCAMPAIGN",
+                        new LinkedList<String>(),
+                        new HashMap<String, String>()
+                )
+        );
+    }
+
+
+    public static void sendSTARTVOTEFORME(TCPClient tcpClient, String host, int port) throws IOException {
+        tcpClient.sendRequest(
+                host,
+                port,
+                new AvaNodeProtocolRequest(
+                        "STARTVOTEFORME",
+                        new LinkedList<String>(),
+                        new HashMap<String, String>()
+                )
+        );
+    }
 
     private static AvaNodeProtocolRequest genReject() {
         return new AvaNodeProtocolRequest(
@@ -93,4 +117,5 @@ public class TCPClient {
                 new HashMap<>()
         );
     }
+
 }

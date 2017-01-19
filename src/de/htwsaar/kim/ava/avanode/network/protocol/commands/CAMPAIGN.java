@@ -37,7 +37,7 @@ public class CAMPAIGN implements Command{
         int source = protocol.getSource();
 
         //EXPLORER
-        if (manager.getCampaignState() == CampaignState.WHITE) {
+        if (manager.getCampaignState() == CampaignState.WHITE && protocol.getNodeCore().getNodeId() != candId) {
             protocol.getNodeCore().getLogger().log(Level.INFO, "Interpreting request from "+source+" as EXPLORER");
             manager.setFirstNeighbor(source);
             manager.setCampaignState(CampaignState.RED);
@@ -95,6 +95,8 @@ public class CAMPAIGN implements Command{
                 //Done
                 manager.resetMessageCounter();
                 manager.setCampaignState(CampaignState.WHITE);
+
+                //protocol.getNodeCore().getDataStore().getFeedbackManager().incrementFeedback();
                 return new Reply200(new HashMap<String, String>() {{
 
                 }});

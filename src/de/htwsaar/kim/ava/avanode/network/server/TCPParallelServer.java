@@ -65,8 +65,12 @@ public class TCPParallelServer extends Thread {
                     client.setSoTimeout(timeout);
                     nodeCore.getLogger().log(Level.FINE, "Neuer Client verbunden: " + client.getInetAddress().toString());
                     TCPParallelWorker worker = new TCPParallelWorker(client, nodeCore);
-                    workerList.add(worker);
-                    workerPool.execute(worker);
+                    //workerList.add(worker);
+                    //workerPool.execute(worker);
+                    Thread t = new Thread(worker);
+                    //workerList.add(worker);
+                    t.start();
+                    t.join();
                 } catch (IOException e) {
                         e.printStackTrace();
                 }
