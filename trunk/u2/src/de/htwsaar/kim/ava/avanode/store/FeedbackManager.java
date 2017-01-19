@@ -10,18 +10,18 @@ import java.util.LinkedList;
 public class FeedbackManager {
 
     private int feedbackCounter;
-    private int threshold;
     private LinkedList<FeedbackObserver> feedbackObservers = new LinkedList<>();
 
+    private NodeCore nodeCore;
 
     public FeedbackManager(NodeCore nodeCore) {
-        this.threshold = nodeCore.getFeedbackThreshold();
+        this.nodeCore = nodeCore;
     }
 
 
     public void incrementFeedback() {
         feedbackCounter++;
-        if ((feedbackCounter % threshold) == 0)
+        if ((feedbackCounter % nodeCore.getFeedbackThreshold()) == 0)
             notifyObservers();
     }
 
