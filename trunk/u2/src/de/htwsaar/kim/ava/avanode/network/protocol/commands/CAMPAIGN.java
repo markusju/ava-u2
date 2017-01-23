@@ -1,14 +1,11 @@
 package de.htwsaar.kim.ava.avanode.network.protocol.commands;
 
-import de.htwsaar.kim.ava.avanode.application.NodeType;
 import de.htwsaar.kim.ava.avanode.exception.CommandExecutionErrorException;
-import de.htwsaar.kim.ava.avanode.file.FileConfig;
 import de.htwsaar.kim.ava.avanode.file.FileEntry;
 import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
 import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply200;
-import de.htwsaar.kim.ava.avanode.network.protocol.requests.AvaNodeProtocolRequest;
 import de.htwsaar.kim.ava.avanode.store.CampaignManager;
 import de.htwsaar.kim.ava.avanode.store.CampaignState;
 
@@ -35,12 +32,13 @@ public class CAMPAIGN implements Command{
         CampaignManager manager = protocol.getNodeCore().getDataStore().getCampaignManager();
 
         int source = protocol.getSource();
+        int campaignId = Integer.valueOf(protocol.getRequest().getParameters().get("ID"));
 
         //EXPLORER
-        if (manager.getCampaignState() == CampaignState.WHITE && protocol.getNodeCore().getNodeId() != candId) {
+        if (manager.getCampaignState(campaignId) == CampaignState.WHITE && protocol.getNodeCore().getNodeId() != candId) {
             protocol.getNodeCore().getLogger().log(Level.INFO, "Interpreting request from "+source+" as EXPLORER");
             manager.setFirstNeighbor(source);
-            manager.setCampaignState(CampaignState.RED);
+            manager.setCampaignState(campaignId, CampaignState.RED);
 
             //Process further actions...
             //...
@@ -73,7 +71,8 @@ public class CAMPAIGN implements Command{
                     TCPClient.sendCAMPAIGN(protocol.getNodeCore().getTcpClient(),
                             entry.getHost(),
                             entry.getPort(),
-                            candId);
+                            candId,
+                            campaignId);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -83,18 +82,20 @@ public class CAMPAIGN implements Command{
 
         }
 
-        manager.incrementMessageCounter();
+        manager.incrementMessageCounter(campaignId);
 
         //ECHO
-        if (manager.getMessageCounter() == neighbors.size()) {
+        if (manager.getMessageCounter(campaignId) == neighbors.size()) {
             protocol.getNodeCore().getLogger().log(Level.INFO, "Interpreting request from "+source+" as ECHO");
-            manager.setCampaignState(CampaignState.GREEN);
+            manager.setCampaignState(campaignId, CampaignState.GREEN);
 
             //Initiator?
             if (protocol.getNodeCore().getNodeId() == candId) {
                 //Done
-                manager.resetMessageCounter();
-                manager.setCampaignState(CampaignState.WHITE);
+                manager.resetMessageCounter(campaignId);
+                manager.setCampaignState(campaignId, CampaignState.WHITE);
+                //protocol.getNodeCore().getDataStore().getCampaignManager().startCampaignLock.release();
+                protocol.getNodeCore().getDataStore().getFeedbackManager().incrementToThreshold();
 
                 //protocol.getNodeCore().getDataStore().getFeedbackManager().incrementFeedback();
                 return new Reply200(new HashMap<String, String>() {{
@@ -114,15 +115,16 @@ public class CAMPAIGN implements Command{
                 TCPClient.sendCAMPAIGN(protocol.getNodeCore().getTcpClient(),
                         firstNeighbor.getHost(),
                         firstNeighbor.getPort(),
-                        candId);
+                        candId,
+                        campaignId);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             //Reset
-            manager.resetMessageCounter();
-            manager.setCampaignState(CampaignState.WHITE);
+            manager.resetMessageCounter(campaignId);
+            manager.setCampaignState(campaignId, CampaignState.WHITE);
         }
 
 

@@ -2,7 +2,9 @@ package de.htwsaar.kim.ava.avanode.store;
 
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 
+import java.sql.Time;
 import java.util.LinkedList;
+import java.util.Timer;
 
 /**
  * Created by markus on 14.01.17.
@@ -21,6 +23,12 @@ public class FeedbackManager {
 
     public void incrementFeedback() {
         feedbackCounter++;
+        if ((feedbackCounter % nodeCore.getFeedbackThreshold()) == 0)
+            notifyObservers();
+    }
+
+    public void incrementToThreshold() {
+        feedbackCounter += nodeCore.getFeedbackThreshold();
         if ((feedbackCounter % nodeCore.getFeedbackThreshold()) == 0)
             notifyObservers();
     }

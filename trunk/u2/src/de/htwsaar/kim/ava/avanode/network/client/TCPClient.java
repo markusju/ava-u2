@@ -7,7 +7,9 @@ import de.htwsaar.kim.ava.avanode.network.protocol.requests.Request;
 
 import javax.xml.soap.Node;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -20,13 +22,19 @@ public class TCPClient {
 
     private AvaNodeClientProtocol avaNodeClientProtocol;
 
+    public static int connectCtr = 0;
 
     public TCPClient(NodeCore nodeCore) {
         this.nodeCore = nodeCore;
     }
 
     private void connect(String host, int port) throws IOException {
-        avaNodeClientProtocol = new AvaNodeClientProtocol(new Socket(host, port));
+        connectCtr++;
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(host, port), 5000);
+
+        //socket.setSoTimeout(100);
+        avaNodeClientProtocol = new AvaNodeClientProtocol(socket);
     }
 
     private void disconnect() throws IOException {
@@ -36,6 +44,8 @@ public class TCPClient {
     public void sendRequest(String host, int port, Request request) throws IOException {
         connect(host, port);
         request.addParameter("SRC", String.valueOf(nodeCore.getNodeId()));
+        nodeCore.getFileConfig().getOwnEntry().incVectorTime();
+        request.addParameter("VECTIME", nodeCore.getFileConfig().getVectorTimes().toString());
         avaNodeClientProtocol.putLine(request.toProtString());
         //TODO Evaluate Response...
         disconnect();
@@ -59,11 +69,11 @@ public class TCPClient {
         );
     }
 
-    public static void sendCAMPAIGN(TCPClient tcpClient, String host, int port, int candId) throws IOException {
+    public static void sendCAMPAIGN(TCPClient tcpClient, String host, int port, int candId, int id) throws IOException {
         tcpClient.sendRequest(
                 host,
                 port,
-                genCampaign(candId)
+                genCampaign(candId, id)
         );
     }
 
@@ -108,13 +118,15 @@ public class TCPClient {
         );
     }
 
-    private static AvaNodeProtocolRequest genCampaign(int candId) {
+    private static AvaNodeProtocolRequest genCampaign(int candId, int id) {
         return new AvaNodeProtocolRequest(
                 "CAMPAIGN",
                 new LinkedList<String>() {{
                     add(String.valueOf(candId));
                 }},
-                new HashMap<>()
+                new HashMap<String, String>() {{
+                    put("ID", String.valueOf(id));
+                }}
         );
     }
 

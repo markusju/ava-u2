@@ -1,6 +1,7 @@
 package de.htwsaar.kim.ava.avanode.file;
 
 
+import de.htwsaar.kim.ava.avanode.application.NodeCore;
 import de.htwsaar.kim.ava.avanode.dot.Dot;
 import de.htwsaar.kim.ava.avanode.dot.Edge;
 
@@ -24,7 +25,10 @@ public class FileConfig {
     private Map<Integer, FileEntry> entries = new HashMap<>();
     private Set<FileEntry> neighbors = new HashSet<>();
 
-    public FileConfig(int ownId, String fileNameConf, String fileNameDot) throws IOException {
+    private NodeCore nodeCore;
+
+    public FileConfig(NodeCore nodeCore, int ownId, String fileNameConf, String fileNameDot) throws IOException {
+        this.nodeCore = nodeCore;
         this.ownId = ownId;
         this.fileNameConf = fileNameConf;
         this.fileNameDot = fileNameDot;
@@ -114,6 +118,22 @@ public class FileConfig {
 
     public Set<FileEntry> getNeighbors() {
         return neighbors;
+    }
+
+    public Map<Integer, Integer> getVectorTimes() {
+        HashMap<Integer, Integer> vecTimes = new HashMap<>();
+        for(FileEntry entry: entries.values()) {
+            vecTimes.put(entry.getId(), entry.getVectorTime());
+        }
+        return vecTimes;
+    }
+
+    public void processIncomingVectorTimes(Map<Integer, Integer> incoming) {
+        for (Map.Entry<Integer, Integer> entry: incoming.entrySet()) {
+            //Retrieve Entry...
+            int currTime = getEntryById(entry.getKey()).getVectorTime();
+            getEntryById(entry.getKey()).updateVectorTime(Integer.max(currTime, entry.getValue()));
+        }
     }
 
     private static int generateRandomInt(int min, int max, ArrayList<Integer> excludeRows) {

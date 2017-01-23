@@ -98,7 +98,7 @@ public class VOTEFORME implements Command {
                                     }})
                             );
                         } catch (IOException e) {
-                            protocol.getNodeCore().getLogger().log(Level.SEVERE, "Could not send VOTEFORME to "+entry.getId(), e);
+                            protocol.getNodeCore().getLogger().log(Level.SEVERE, "Could not send VOTEFORME to "+entry.getId()+" "+entry.getHost(), e);
                         }
         }
                 /*}).start();

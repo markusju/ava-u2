@@ -32,6 +32,12 @@ public abstract class AbstractBaseProtocol implements Protocol {
 
     }
 
+    public AbstractBaseProtocol() {
+        this.bufferedReader = null;
+        this.output = null;
+        this.socket = null;
+    }
+
     /**
      * Initiate AbstractBaseProtocol.
      */

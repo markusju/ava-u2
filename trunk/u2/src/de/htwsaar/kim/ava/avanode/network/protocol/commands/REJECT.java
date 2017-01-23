@@ -26,6 +26,7 @@ public class REJECT implements Command {
 
         int source = protocol.getSource();
 
+        protocol.getNodeCore().getDataStore().getFeedbackManager().incrementFeedback();
 
 
         return new Reply200(new HashMap<String, String>() {{
