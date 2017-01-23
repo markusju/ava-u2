@@ -7,13 +7,11 @@ import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
 import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply200;
-import de.htwsaar.kim.ava.avanode.network.protocol.requests.AvaNodeProtocolRequest;
 import de.htwsaar.kim.ava.avanode.store.CampaignManager;
 import de.htwsaar.kim.ava.avanode.store.CampaignState;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Set;
 
 /**
@@ -34,22 +32,30 @@ public class STARTCAMPAIGN implements Command {
         }
 
         CampaignManager manager = protocol.getNodeCore().getDataStore().getCampaignManager();
+        int counter = protocol.getNodeCore().getDataStore().getCounter();
+        int campaignId = Integer.valueOf(String.valueOf(protocol.getNodeCore().getNodeId())+String.valueOf(counter));
+        protocol.getNodeCore().getDataStore().incrementCounter();
 
+        /*try {
+            protocol.getNodeCore().getDataStore().getCampaignManager().startCampaignLock.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
 
-        if (manager.getCampaignState() != CampaignState.WHITE)
+        if (manager.getCampaignState(campaignId) != CampaignState.WHITE)
             throw new CommandExecutionErrorException("Wrong State");
 
         Set<FileEntry> neighbors = protocol.getNodeCore().getFileConfig().getNeighbors();
-        protocol.getNodeCore().getDataStore().incrementCounter();
 
-        manager.setCampaignState(CampaignState.RED);
+        manager.setCampaignState(campaignId, CampaignState.RED);
 
         for (FileEntry partyFellow: neighbors) {
             try {
                 TCPClient.sendCAMPAIGN(protocol.getNodeCore().getTcpClient(),
                         partyFellow.getHost(),
                         partyFellow.getPort(),
-                        protocol.getNodeCore().getNodeId()
+                        protocol.getNodeCore().getNodeId(),
+                        campaignId
                 );
             } catch (IOException e) {
                 e.printStackTrace();

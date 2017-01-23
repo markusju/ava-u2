@@ -2,6 +2,7 @@ package de.htwsaar.kim.ava.avanode;
 
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 import de.htwsaar.kim.ava.avanode.application.NodeType;
+import de.htwsaar.kim.ava.avanode.file.FileConfig;
 import de.htwsaar.kim.ava.avanode.store.FeedbackTeam;
 
 import java.util.Random;
@@ -20,14 +21,14 @@ public class MakeAVAGreatAgain {
         System.out.println("Making AVA Great Again!");
         System.out.println("Initiating Candidates.");
 
-        //FileConfig.genConfigFile(100);
+        //FileConfig.genConfigFile(64);
         /*FileConfig.genElectionDotFile(
-                100,
-                6,
+                8,
+                3,
                 3
         );*/
 
-        int feedbackThreshold = 10;
+        int feedbackThreshold = 3;
 
         NodeCore[] nodes = new NodeCore[1000];
 
@@ -56,7 +57,7 @@ public class MakeAVAGreatAgain {
         System.out.println("Initiating Constituents.");
 
         //Constituency...
-        for (int i = 3; i <= 100; i++) {
+        for (int i = 3; i <= 14; i++) {
             NodeCore node = new NodeCore(i, feedbackThreshold);
             nodes[i] = node;
             node.setNodeType(NodeType.VOTER);
@@ -66,17 +67,19 @@ public class MakeAVAGreatAgain {
         }
 
         //Establishing Confidence for Party Fellows of Candidate 1
-        for (int i = 3; i<=8; i++) {
+        for (int i = 3; i<=5; i++) {
             nodes[i].getDataStore().setConfidenceLevel(1, 100);
             nodes[i].getDataStore().setConfidenceLevel(2, 0);
         }
         //Establishing Confidence for Party Fellows of Candidate 1
-        for (int i = 9; i<=14; i++) {
+        for (int i =6; i<=8; i++) {
             nodes[i].getDataStore().setConfidenceLevel(2, 100);
             nodes[i].getDataStore().setConfidenceLevel(1, 0);
         }
 
         System.out.println("Political System successfully started.");
+
+        //cand1.startVoteforme();
     }
 
 }

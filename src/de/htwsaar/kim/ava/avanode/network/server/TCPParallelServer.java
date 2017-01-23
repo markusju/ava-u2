@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 
 /**
@@ -30,6 +31,8 @@ public class TCPParallelServer extends Thread {
     private ServerStatus serverStatus = ServerStatus.STOPPED;
     private List<ServerStatusObserver> serverStatusObservers = new LinkedList<>();
 
+    public Semaphore mutex = new Semaphore(1, true);
+
     //All Workers are pooled to avoid resource exhaustion
     private /*static*/ ExecutorService workerPool = Executors.newFixedThreadPool(MAX_NUM_THREADS);
     protected List<TCPParallelWorker> workerList = new LinkedList<>();
@@ -49,7 +52,7 @@ public class TCPParallelServer extends Thread {
         {
 
             // Erzeugen der Socket/binden an Port/Wartestellung
-            socket = new ServerSocket(port);
+            socket = new ServerSocket(port, 1000);
             nodeCore.getLogger().log(Level.INFO, String.format("Warten auf Verbindungen (IP: %s, Port: %s)",
                     InetAddress.getLocalHost().getHostAddress(),
                     String.valueOf(port))
@@ -69,8 +72,9 @@ public class TCPParallelServer extends Thread {
                     //workerPool.execute(worker);
                     Thread t = new Thread(worker);
                     //workerList.add(worker);
+                    t.setName("Worker-of-"+getName());
+                    mutex.acquire();
                     t.start();
-                    t.join();
                 } catch (IOException e) {
                         e.printStackTrace();
                 }

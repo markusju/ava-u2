@@ -1,12 +1,18 @@
 package de.htwsaar.kim.ava.avanode.application;
 
+import de.htwsaar.kim.ava.avanode.exception.CommandExecutionErrorException;
 import de.htwsaar.kim.ava.avanode.file.FileConfig;
 import de.htwsaar.kim.ava.avanode.logging.SingleLineFormatter;
 import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
+import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
+import de.htwsaar.kim.ava.avanode.network.protocol.commands.CAMPAIGN;
+import de.htwsaar.kim.ava.avanode.network.protocol.commands.STARTCAMPAIGN;
+import de.htwsaar.kim.ava.avanode.network.protocol.commands.STARTVOTEFORME;
 import de.htwsaar.kim.ava.avanode.network.server.TCPParallelServer;
 import de.htwsaar.kim.ava.avanode.store.DataStore;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -30,7 +36,7 @@ public class NodeCore {
 
     public NodeCore(int nodeId, int feedbackThreshold) throws IOException {
         this.nodeId = nodeId;
-        fileConfig = new FileConfig(this.nodeId, "file.txt", "file.dot");
+        fileConfig = new FileConfig(this, this.nodeId, "file.txt", "file.dot");
         tcpParallelServer = new TCPParallelServer(this);
         tcpClient = new TCPClient(this);
         dataStore = new DataStore(this);
@@ -88,4 +94,37 @@ public class NodeCore {
     public int getFeedbackThreshold() {
         return feedbackThreshold;
     }
+
+    public void startCampaign() {
+        try {
+            TCPClient.sendSTARTCAMPAIGN(getTcpClient(),
+                    getFileConfig().getOwnEntry().getHost(),
+                    getFileConfig().getOwnEntry().getPort()
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startVoteforme() {
+        try {
+            TCPClient.sendSTARTVOTEFORME(getTcpClient(),
+                    getFileConfig().getOwnEntry().getHost(),
+                    getFileConfig().getOwnEntry().getPort()
+                    );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void startVoteformeD() {
+        try {
+            AvaNodeProtocol protDummy = new AvaNodeProtocol(this);
+            (new STARTVOTEFORME()).execute(protDummy);
+        } catch (CommandExecutionErrorException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

@@ -2,15 +2,20 @@ package de.htwsaar.kim.ava.avanode.store;
 
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 
 /**
  * Created by markus on 15.01.17.
  */
 public class CampaignManager {
-    private CampaignState campaignState = CampaignState.WHITE;
-    private int messageCounter = 0;
+    private Map<Integer, CampaignState> states = new HashMap<>();
+    private Map<Integer, Integer> messageCounter = new HashMap<>();
     private int firstNeighbor;
+
+    public Semaphore startCampaignLock = new Semaphore(1, true);
 
     private NodeCore nodeCore;
 
@@ -18,25 +23,29 @@ public class CampaignManager {
         this.nodeCore = nodeCore;
     }
 
-    public CampaignState getCampaignState() {
-        return campaignState;
+    public CampaignState getCampaignState(int campaignId) {
+        if (!states.containsKey(campaignId)) {
+            states.put(campaignId, CampaignState.WHITE);
+        }
+        return states.get(campaignId);
     }
 
-    public void setCampaignState(CampaignState campaignState) {
-        nodeCore.getLogger().log(Level.INFO, "Campaign state changed to "+campaignState);
-        this.campaignState = campaignState;
+    public void setCampaignState(int campaignId, CampaignState campaignState) {
+        nodeCore.getLogger().log(Level.INFO, "Campaign state changed for campaign "+ campaignId+ " to "+campaignState);
+        states.put(campaignId, campaignState);
     }
 
-    public void incrementMessageCounter() {
-        messageCounter++;
+    public void incrementMessageCounter(int campaignId) {
+        int count = messageCounter.containsKey(campaignId) ? messageCounter.get(campaignId) : 0;
+        messageCounter.put(campaignId, count + 1);
     }
 
-    public int getMessageCounter() {
-        return messageCounter;
+    public int getMessageCounter(int campaignId) {
+        return messageCounter.get(campaignId);
     }
 
-    public void resetMessageCounter() {
-        messageCounter = 0;
+    public void resetMessageCounter(int campaignId) {
+        messageCounter.put(campaignId, 0);
     }
 
     public int getFirstNeighbor() {
@@ -46,4 +55,5 @@ public class CampaignManager {
     public void setFirstNeighbor(int firstNeighbor) {
         this.firstNeighbor = firstNeighbor;
     }
+
 }
