@@ -47,6 +47,7 @@ public class TERMINATE implements Command {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            protocol.getNodeCore().getFileConfig().getOwnEntry().setVectorTimeLimit(s);
 
         } else {
             protocol.getNodeCore().getLogger().log(Level.INFO, "Termination time s="+s+" is invalid.");

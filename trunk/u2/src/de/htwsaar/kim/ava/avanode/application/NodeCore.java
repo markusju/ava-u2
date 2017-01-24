@@ -7,6 +7,7 @@ import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
 import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.commands.CAMPAIGN;
 import de.htwsaar.kim.ava.avanode.network.protocol.commands.STARTCAMPAIGN;
+import de.htwsaar.kim.ava.avanode.network.protocol.commands.STARTTERMINATE;
 import de.htwsaar.kim.ava.avanode.network.protocol.commands.STARTVOTEFORME;
 import de.htwsaar.kim.ava.avanode.network.server.TCPParallelServer;
 import de.htwsaar.kim.ava.avanode.store.DataStore;

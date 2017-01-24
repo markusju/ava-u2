@@ -77,6 +77,21 @@ public class TCPClient {
         );
     }
 
+
+    public static void sendSTARTTERMINATE(TCPClient tcpClient, String host, int port, int s) throws IOException {
+        tcpClient.sendRequest(
+                host,
+                port,
+                new AvaNodeProtocolRequest(
+                        "STARTTERMINATE",
+                        new LinkedList<String>() {{
+                            add(String.valueOf(s));
+                        }},
+                        new HashMap<String, String>()
+                )
+        );
+    }
+
     public static void sendSTARTCAMPAIGN(TCPClient tcpClient, String host, int port) throws IOException {
         tcpClient.sendRequest(
                 host,
