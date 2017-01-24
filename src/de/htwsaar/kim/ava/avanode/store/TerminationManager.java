@@ -133,6 +133,19 @@ public class TerminationManager {
             } else {
                 reset();
                 nodeCore.getLogger().log(Level.INFO, "Terminating Vector Time s="+s+" has been accepted by all nodes.");
+                try {
+                    nodeCore.getTcpClient().sendRequest(
+                            nodeCore.getFileConfig().getEntryById(0).getHost(),
+                            nodeCore.getFileConfig().getEntryById(0).getPort(),
+                            new AvaNodeProtocolRequest(
+                                    "STARTSNAPSHOT",
+                                    new LinkedList<String>() {{}},
+                                    new HashMap<String, String>()
+                            )
+                    );
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
 
