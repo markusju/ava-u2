@@ -1,5 +1,6 @@
 package de.htwsaar.kim.ava.avanode.network.protocol.commands;
 
+import de.htwsaar.kim.ava.avanode.application.NodeType;
 import de.htwsaar.kim.ava.avanode.exception.CommandExecutionErrorException;
 import de.htwsaar.kim.ava.avanode.file.FileEntry;
 import de.htwsaar.kim.ava.avanode.network.client.TCPClient;
@@ -26,6 +27,9 @@ public class CAMPAIGN implements Command{
 
     @Override
     public Reply execute(AvaNodeProtocol protocol) throws CommandExecutionErrorException {
+
+        if (protocol.getNodeCore().getNodeType() != NodeType.CANDIDATE && protocol.getNodeCore().getNodeType() != NodeType.VOTER)
+            throw new CommandExecutionErrorException("Command not allowed for this NodeType");
 
         int candId = Integer.valueOf(protocol.getRequest().getMethodArguments().get(0));
         Set<FileEntry> neighbors = protocol.getNodeCore().getFileConfig().getNeighbors();

@@ -21,7 +21,7 @@ public class MakeAVAGreatAgain {
         System.out.println("Making AVA Great Again!");
         System.out.println("Initiating Candidates.");
 
-        //FileConfig.genConfigFile(64);
+        FileConfig.genConfigFile(14);
         /*FileConfig.genElectionDotFile(
                 8,
                 3,
@@ -32,6 +32,10 @@ public class MakeAVAGreatAgain {
 
         NodeCore[] nodes = new NodeCore[1000];
 
+        //Observer
+        NodeCore observer = new NodeCore(0, feedbackThreshold);
+        observer.setNodeType(NodeType.OBSERVER);
+        observer.startNode();
 
         //Candidates
         NodeCore cand1 = new NodeCore(1, feedbackThreshold);
