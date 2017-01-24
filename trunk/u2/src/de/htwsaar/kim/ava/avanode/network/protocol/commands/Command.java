@@ -34,14 +34,20 @@ public interface Command {
                 return new UNKNOWN();
             case "VOTEFORME":
                 return new VOTEFORME();
+            case "SNAPSHOT":
+                return new SNAPSHOT();
             case "STARTVOTEFORME":
                 return new STARTVOTEFORME();
+            case "STARTSNAPSHOT":
+                return new STARTSNAPSHOT();
             case "STARTCAMPAIGN":
                 return new STARTCAMPAIGN();
             case "STARTTERMINATE":
                 return new STARTTERMINATE();
             case "SHUTDOWN":
                 return new SHUTDOWN();
+            case "VOTE":
+                return new VOTE();
             default:
                 return new UNKNOWN();
         }
