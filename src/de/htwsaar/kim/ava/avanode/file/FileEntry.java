@@ -31,7 +31,7 @@ public class FileEntry {
     }
 
     public boolean isTerminated() {
-        return vectorTime > vectorTimeLimit;
+        return vectorTimeLimit != -1 && vectorTime > vectorTimeLimit;
     }
 
     public void setVectorTimeLimit(int vectorTimeLimit) {

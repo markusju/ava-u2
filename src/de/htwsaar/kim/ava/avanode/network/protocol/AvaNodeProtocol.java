@@ -15,6 +15,7 @@ import de.htwsaar.kim.ava.avanode.network.protocol.requests.Request;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -30,6 +31,8 @@ public class AvaNodeProtocol extends AbstractBaseProtocol implements Runnable {
     private Request request;
     private int source;
     private Map<Integer, Integer> vectimes = new HashMap<>();
+
+    public static String[] ALLOWED_AFTER_TERMINATION = {"STATUS", "ACK", "NACK", "TERMINATE", "STARTTERMINATE"};
 
     public AvaNodeProtocol(Socket socket, NodeCore nodeCore) throws IOException {
         super(socket);
@@ -82,6 +85,17 @@ public class AvaNodeProtocol extends AbstractBaseProtocol implements Runnable {
             throw new ClientErrorException("SRC Paramter was not supplied!");
         }
     }
+
+    private void checkForTermination() throws ClientErrorException {
+        boolean terminated = nodeCore.getFileConfig().getOwnEntry().isTerminated();
+        boolean methodAllowed = Arrays.asList(ALLOWED_AFTER_TERMINATION).contains(request.getMethod());
+
+        if (terminated && !methodAllowed) {
+            throw new ClientErrorException("Client is terminated.");
+        }
+
+    }
+
     @Override
     public void run() {
         try {
@@ -94,10 +108,11 @@ public class AvaNodeProtocol extends AbstractBaseProtocol implements Runnable {
             checkRequest();
             source = Integer.valueOf(request.getParameters().get("SRC"));
             readVectime();
+
             nodeCore.getFileConfig().getOwnEntry().incVectorTime();
 
             getNodeCore().getLogger().log(Level.INFO, "Request '"+request.getMethod()+"' from "+source);
-
+            checkForTermination();
             close();
             //Evaluierung
             //nodeCore.getTcpParallelServer().mutex.acquire();
