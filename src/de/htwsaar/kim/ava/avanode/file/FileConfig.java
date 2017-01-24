@@ -116,6 +116,9 @@ public class FileConfig {
         return entries.get(id);
     }
 
+    public Set<FileEntry> getAllEntries() {
+        return new HashSet<>(entries.values());
+    }
     public Set<FileEntry> getNeighbors() {
         return neighbors;
     }
@@ -259,7 +262,7 @@ public class FileConfig {
 
     public static void genConfigFile(int maxId, String fileName) throws IOException{
         try (PrintWriter writer = new PrintWriter(fileName, "UTF-8")) {
-            for (int i = 1; i <= maxId; i++)
+            for (int i = 0; i <= maxId; i++)
                 writer.println(Integer.toString(i) + " 127.0.0.1 " + Integer.toString(5000 + i));
         }
 

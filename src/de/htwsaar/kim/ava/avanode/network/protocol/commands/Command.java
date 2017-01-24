@@ -14,16 +14,22 @@ public interface Command {
 
     static Command interpretRequest(Request request) {
         switch (request.getMethod()) {
+            case "ACK":
+                return new ACK();
             case "APPROVE":
                 return new APPROVE();
             case "CAMPAIGN":
                 return new CAMPAIGN();
+            case "NACK":
+                return new NACK();
             case "REJECT":
                 return new REJECT();
             case "RUMOR":
                 return new RUMOR();
             case "STATUS":
                 return new STATUS();
+            case "TERMINATE":
+                return new TERMINATE();
             case "UNKNOWN":
                 return new UNKNOWN();
             case "VOTEFORME":
@@ -32,6 +38,8 @@ public interface Command {
                 return new STARTVOTEFORME();
             case "STARTCAMPAIGN":
                 return new STARTCAMPAIGN();
+            case "STARTTERMINATE":
+                return new STARTTERMINATE();
             case "SHUTDOWN":
                 return new SHUTDOWN();
             default:

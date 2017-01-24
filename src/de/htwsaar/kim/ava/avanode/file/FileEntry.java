@@ -10,6 +10,7 @@ public class FileEntry {
     private int port;
 
     private int vectorTime = 0;
+    private int vectorTimeLimit = -1;
 
     public FileEntry(int id, String host, int port) {
         this.id = id;
@@ -26,8 +27,10 @@ public class FileEntry {
     }
 
     public synchronized void updateVectorTime(int vectorTime) {
-        this.vectorTime = Integer.max(vectorTime, this.vectorTime);
+        this.vectorTime = vectorTime;
     }
+
+
 
     public int getId() {
         return id;

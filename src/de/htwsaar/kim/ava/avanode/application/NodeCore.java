@@ -32,6 +32,7 @@ public class NodeCore {
     private DataStore dataStore;
     private Logger logger;
     private NodeType nodeType = NodeType.UNKNOWN;
+    private NodeStatus nodeStatus = NodeStatus.ACTIVE;
     private int feedbackThreshold;
 
     public NodeCore(int nodeId, int feedbackThreshold) throws IOException {

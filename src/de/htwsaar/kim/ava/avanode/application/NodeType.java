@@ -6,5 +6,6 @@ package de.htwsaar.kim.ava.avanode.application;
 public enum NodeType {
     CANDIDATE,
     VOTER,
+    OBSERVER,
     UNKNOWN
 }
