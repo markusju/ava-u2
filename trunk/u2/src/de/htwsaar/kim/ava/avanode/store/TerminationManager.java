@@ -20,6 +20,8 @@ public class TerminationManager {
     private int nackCounter = 0;
     private int sentCounter = 0;
 
+    private int resetCounter = 0;
+
     private int s = 0;
 
 
@@ -99,6 +101,7 @@ public class TerminationManager {
         resetAckCounter();
         resetNackCounter();
         resetSentCounter();
+        resetCounter++;
         setTerminationState(TerminationState.CLEAR);
     }
 
@@ -118,7 +121,7 @@ public class TerminationManager {
                                 new AvaNodeProtocolRequest(
                                         "STARTTERMINATE",
                                         new LinkedList<String>() {{
-                                            add(String.valueOf(s+10));
+                                            add(String.valueOf((s+10)*resetCounter));
                                         }},
                                         new HashMap<String, String>()
                                 )
