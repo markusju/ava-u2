@@ -30,7 +30,13 @@ public class FileEntry {
         this.vectorTime = vectorTime;
     }
 
+    public boolean isTerminated() {
+        return vectorTime > vectorTimeLimit;
+    }
 
+    public void setVectorTimeLimit(int vectorTimeLimit) {
+        this.vectorTimeLimit = vectorTimeLimit;
+    }
 
     public int getId() {
         return id;

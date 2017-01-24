@@ -20,6 +20,7 @@ public class DataStore {
 
     private CampaignManager campaignManager;
     private FeedbackManager feedbackManager;
+    private TerminationManager terminationManager;
 
     private NodeCore nodeCore;
 
@@ -28,6 +29,7 @@ public class DataStore {
         this.nodeCore = nodeCore;
         feedbackManager = new FeedbackManager(nodeCore);
         campaignManager = new CampaignManager(nodeCore);
+        terminationManager = new TerminationManager(nodeCore);
     }
 
     public void addRumor(String rumor, int source) {
@@ -136,5 +138,9 @@ public class DataStore {
 
     public FeedbackManager getFeedbackManager() {
         return feedbackManager;
+    }
+
+    public TerminationManager getTerminationManager() {
+        return terminationManager;
     }
 }
