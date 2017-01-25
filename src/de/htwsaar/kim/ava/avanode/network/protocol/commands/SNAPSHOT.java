@@ -31,6 +31,7 @@ public class SNAPSHOT implements Command {
             throw new CommandExecutionErrorException("S has not been set yet.");
 
         protocol.getNodeCore().getFileConfig().getOwnEntry().updateVectorTime(s);
+        int voteCandId = protocol.getNodeCore().getDataStore().getVoteCandidateId();
 
         try {
             protocol.getNodeCore().getTcpClient().sendRequest(
@@ -39,7 +40,7 @@ public class SNAPSHOT implements Command {
                     new AvaNodeProtocolRequest(
                             "VOTE",
                             new LinkedList<String>() {{
-                                add("1");
+                                add(String.valueOf(voteCandId));
                             }},
                             new HashMap<String, String>()
                     )
