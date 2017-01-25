@@ -14,6 +14,7 @@ public class DataStore {
     private HashMap<String, Rumor> rumors = new HashMap<>();
     private List<Integer> voteForMeIds = new LinkedList<>();
     private List<Integer> campaignIds = new LinkedList<>();
+
     private int counter = 0;
     private int cand1Confidence = 0;
     private int cand2Confidence = 0;
@@ -21,6 +22,7 @@ public class DataStore {
     private CampaignManager campaignManager;
     private FeedbackManager feedbackManager;
     private TerminationManager terminationManager;
+    private ElectionManager electionManager;
 
     private NodeCore nodeCore;
 
@@ -30,6 +32,7 @@ public class DataStore {
         feedbackManager = new FeedbackManager(nodeCore);
         campaignManager = new CampaignManager(nodeCore);
         terminationManager = new TerminationManager(nodeCore);
+        electionManager = new ElectionManager();
     }
 
     public void addRumor(String rumor, int source) {
@@ -75,6 +78,13 @@ public class DataStore {
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    public int getVoteCandidateId() {
+        if (cand1Confidence > cand2Confidence) {
+            return 1;
+        }
+        return 2;
     }
 
     public synchronized void setConfidenceLevel(int candId, int confidenceLevel) {
@@ -143,4 +153,6 @@ public class DataStore {
     public TerminationManager getTerminationManager() {
         return terminationManager;
     }
+
+    public ElectionManager getElectionManager() { return electionManager; }
 }

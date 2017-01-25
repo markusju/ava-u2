@@ -4,6 +4,8 @@ import de.htwsaar.kim.ava.avanode.exception.CommandExecutionErrorException;
 import de.htwsaar.kim.ava.avanode.network.protocol.AvaNodeProtocol;
 import de.htwsaar.kim.ava.avanode.network.protocol.replies.Reply;
 
+import java.util.logging.Level;
+
 /**
  * Created by markus on 24.01.17.
  */
@@ -16,9 +18,13 @@ public class VOTE implements Command {
     @Override
     public Reply execute(AvaNodeProtocol protocol) throws CommandExecutionErrorException {
 
+        int voteCandId = Integer.valueOf(protocol.getRequest().getMethodArguments().get(0));
 
+        protocol.getNodeCore().getDataStore().getElectionManager().addVote(voteCandId);
 
+        protocol.getNodeCore().getLogger().log(Level.INFO, "Vote for "+voteCandId);
 
+        protocol.getNodeCore().getLogger().log(Level.INFO, "President: "+protocol.getNodeCore().getDataStore().getElectionManager().electPresident());
         return null;
     }
 }
