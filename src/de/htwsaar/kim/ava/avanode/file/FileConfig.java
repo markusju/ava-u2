@@ -277,5 +277,14 @@ public class FileConfig {
     }
 
 
+    public int getNumOfVotersAndCandidates() {
+        int ctr = 0;
+        for (FileEntry entry: getAllEntries()){
+            if (entry.getId() == 0) continue;
+            ctr++;
+        }
+        return ctr;
+    }
+
 
 }

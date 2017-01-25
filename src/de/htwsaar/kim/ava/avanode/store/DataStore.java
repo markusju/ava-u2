@@ -32,7 +32,7 @@ public class DataStore {
         feedbackManager = new FeedbackManager(nodeCore);
         campaignManager = new CampaignManager(nodeCore);
         terminationManager = new TerminationManager(nodeCore);
-        electionManager = new ElectionManager();
+        electionManager = new ElectionManager(nodeCore);
     }
 
     public void addRumor(String rumor, int source) {

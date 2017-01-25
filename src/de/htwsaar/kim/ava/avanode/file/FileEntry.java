@@ -50,6 +50,9 @@ public class FileEntry {
         return port;
     }
 
+    public int getVectorTimeLimit() {
+        return vectorTimeLimit;
+    }
 
     @Override
     public String toString() {

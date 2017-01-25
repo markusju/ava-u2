@@ -25,7 +25,7 @@ public class SNAPSHOT implements Command {
         if (protocol.getNodeCore().getNodeType() != NodeType.VOTER && protocol.getNodeCore().getNodeType() != NodeType.CANDIDATE)
             throw new CommandExecutionErrorException("Invalid Node Type");
 
-        int s = protocol.getNodeCore().getFileConfig().getOwnEntry().getVectorTime();
+        int s = protocol.getNodeCore().getFileConfig().getOwnEntry().getVectorTimeLimit();
 
         if (s == -1)
             throw new CommandExecutionErrorException("S has not been set yet.");
