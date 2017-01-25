@@ -20,11 +20,9 @@ public class VOTE implements Command {
 
         int voteCandId = Integer.valueOf(protocol.getRequest().getMethodArguments().get(0));
 
+        protocol.getNodeCore().getLogger().log(Level.INFO, "Vote for "+voteCandId);
         protocol.getNodeCore().getDataStore().getElectionManager().addVote(voteCandId);
 
-        protocol.getNodeCore().getLogger().log(Level.INFO, "Vote for "+voteCandId);
-
-        protocol.getNodeCore().getLogger().log(Level.INFO, "President: "+protocol.getNodeCore().getDataStore().getElectionManager().electPresident());
         return null;
     }
 }
