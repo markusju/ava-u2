@@ -21,10 +21,10 @@ public class MakeAVAGreatAgain {
         System.out.println("Making AVA Great Again!");
         System.out.println("Initiating Candidates.");
 
-        FileConfig.genConfigFile(14);
+        //FileConfig.genConfigFile(100);
         /*FileConfig.genElectionDotFile(
-                8,
-                3,
+                100,
+                6,
                 3
         );*/
 
@@ -61,7 +61,7 @@ public class MakeAVAGreatAgain {
         System.out.println("Initiating Constituents.");
 
         //Constituency...
-        for (int i = 3; i <= 14; i++) {
+        for (int i = 3; i <= 100; i++) {
             NodeCore node = new NodeCore(i, feedbackThreshold);
             nodes[i] = node;
             node.setNodeType(NodeType.VOTER);
@@ -71,12 +71,12 @@ public class MakeAVAGreatAgain {
         }
 
         //Establishing Confidence for Party Fellows of Candidate 1
-        for (int i = 3; i<=5; i++) {
+        for (int i = 3; i<=8; i++) {
             nodes[i].getDataStore().setConfidenceLevel(1, 100);
             nodes[i].getDataStore().setConfidenceLevel(2, 0);
         }
         //Establishing Confidence for Party Fellows of Candidate 1
-        for (int i =6; i<=8; i++) {
+        for (int i =9; i<=14; i++) {
             nodes[i].getDataStore().setConfidenceLevel(2, 100);
             nodes[i].getDataStore().setConfidenceLevel(1, 0);
         }
