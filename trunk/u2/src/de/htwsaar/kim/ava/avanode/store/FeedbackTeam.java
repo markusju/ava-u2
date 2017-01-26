@@ -29,12 +29,16 @@ public class FeedbackTeam implements FeedbackObserver {
     public void feedbackThresholdReached() {
         nodeCore.getLogger().log(Level.INFO, "Feedback Threshold reached.");
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        nodeCore.startVoteforme();
+        if (rand.nextBoolean()) {
+            nodeCore.startVoteforme();
+        } else {
+            nodeCore.startCampaign();
+        }
 
 
     }

@@ -147,6 +147,57 @@ public class FileConfig {
         return random;
     }
 
+    private static List<Integer> prepareSequence(int numOfParticpants, int numOfPartyFellows, int numOfFriends) {
+        List<Integer> nodeDegSeq = new LinkedList<>();
+
+
+        nodeDegSeq.add(numOfPartyFellows);
+        nodeDegSeq.add(numOfPartyFellows);
+
+        for (int i = 3; i <= numOfParticpants ; i++) {
+            nodeDegSeq.add(numOfFriends);
+        }
+        nodeDegSeq.sort(Integer::compareTo);
+        Collections.reverse(nodeDegSeq);
+        return nodeDegSeq;
+    }
+
+    private static List<Integer> processSequence(List<Integer> sequence) {
+        int d = sequence.get(0);
+
+        for (int i = 1; i <= d ; i++) {
+            if (sequence.get(i) < 1)
+                throw new IllegalArgumentException("Not possible");
+        }
+
+        sequence.remove(0);
+
+        for (int i = 0; i < d ; i++) {
+            sequence.set(i, sequence.get(i)-1);
+        }
+
+
+        sequence.sort(Integer::compareTo);
+        Collections.reverse(sequence);
+        return sequence;
+    }
+
+    private static boolean done(List<Integer> sequence) {
+        for (Integer i : sequence){
+            if (i != 0) return false;
+        }
+        return true;
+    }
+
+    public static void checkParams(int numOfParticpants, int numOfPartyFellows, int numOfFriends) {
+        List<Integer> seq = prepareSequence(numOfParticpants, numOfPartyFellows, numOfFriends);
+
+        while (!done(seq))
+            processSequence(seq);
+
+
+    }
+
     public static void genElectionDotFile(int numOfParticpants, int numOfPartyFellows, int numOfFriends) throws FileNotFoundException, UnsupportedEncodingException {
 
         int cand1 = 1;
@@ -275,6 +326,7 @@ public class FileConfig {
                 3
         );
     }
+
 
 
     public int getNumOfVotersAndCandidates() {
