@@ -28,7 +28,7 @@ public class MakeAVAGreatAgain {
                 3
         );*/
 
-        int feedbackThreshold = 3;
+        int feedbackThreshold = 6;
 
         NodeCore[] nodes = new NodeCore[1000];
 

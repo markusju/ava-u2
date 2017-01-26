@@ -73,7 +73,7 @@ public class TCPParallelServer extends Thread {
                     Thread t = new Thread(worker);
                     //workerList.add(worker);
                     t.setName("Worker-of-"+getName());
-                    mutex.acquire();
+                    //mutex.acquire();
                     t.start();
                 } catch (IOException e) {
                         e.printStackTrace();

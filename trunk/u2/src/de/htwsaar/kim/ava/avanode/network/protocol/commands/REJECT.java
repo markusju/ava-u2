@@ -25,9 +25,9 @@ public class REJECT implements Command {
         }
 
         int source = protocol.getSource();
+        int id = Integer.valueOf(protocol.getRequest().getParameters().get("ID"));
 
-        protocol.getNodeCore().getDataStore().getFeedbackManager().incrementFeedback();
-
+        protocol.getNodeCore().getDataStore().getFeedbackManager().receivedApproveOrReject(id);
 
         return new Reply200(new HashMap<String, String>() {{
 

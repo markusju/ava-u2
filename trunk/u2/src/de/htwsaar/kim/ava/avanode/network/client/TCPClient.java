@@ -52,20 +52,20 @@ public class TCPClient {
     }
 
 
-    public static void sendAPPROVE(TCPClient tcpClient, String host, int port) throws IOException {
+    public static void sendAPPROVE(TCPClient tcpClient, String host, int port, int id) throws IOException {
         tcpClient.sendRequest(
                 host,
                 port,
-                genApprove()
+                genApprove(id)
         );
     }
 
 
-    public static void sendREJECT(TCPClient tcpClient, String host, int port) throws IOException {
+    public static void sendREJECT(TCPClient tcpClient, String host, int port, int id) throws IOException {
         tcpClient.sendRequest(
                 host,
                 port,
-                genReject()
+                genReject(id)
         );
     }
 
@@ -117,19 +117,23 @@ public class TCPClient {
         );
     }
 
-    private static AvaNodeProtocolRequest genReject() {
+    private static AvaNodeProtocolRequest genReject(int id) {
         return new AvaNodeProtocolRequest(
                 "REJECT",
                 new LinkedList<String>(),
-                new HashMap<String, String>()
+                new HashMap<String, String>() {{
+                    put("ID", String.valueOf(id));
+                }}
         );
     }
 
-    private static AvaNodeProtocolRequest genApprove() {
+    private static AvaNodeProtocolRequest genApprove(int id) {
         return new AvaNodeProtocolRequest(
                 "APPROVE",
                 new LinkedList<String>(),
-                new HashMap<String, String>()
+                new HashMap<String, String>() {{
+                    put("ID", String.valueOf(id));
+                }}
         );
     }
 
