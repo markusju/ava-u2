@@ -60,7 +60,9 @@ public class VOTEFORME implements Command {
                 try {
                     TCPClient.sendREJECT(protocol.getNodeCore().getTcpClient(),
                             protocol.getNodeCore().getFileConfig().getEntryById(candId).getHost(),
-                            protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort());
+                            protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort(),
+                            identifier
+                    );
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -71,7 +73,8 @@ public class VOTEFORME implements Command {
         try {
             TCPClient.sendAPPROVE(protocol.getNodeCore().getTcpClient(),
                     protocol.getNodeCore().getFileConfig().getEntryById(candId).getHost(),
-                    protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort()
+                    protocol.getNodeCore().getFileConfig().getEntryById(candId).getPort(),
+                    identifier
             );
         } catch (IOException e) {
             e.printStackTrace();

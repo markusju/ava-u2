@@ -3,6 +3,7 @@ package de.htwsaar.kim.ava.avanode.store;
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 
 import java.sql.Time;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Timer;
 
@@ -13,6 +14,8 @@ public class FeedbackManager {
 
     private int feedbackCounter;
     private LinkedList<FeedbackObserver> feedbackObservers = new LinkedList<>();
+    private HashMap<Integer, Integer> approveRejectIdMap = new HashMap<>();
+
 
     private NodeCore nodeCore;
 
@@ -20,6 +23,16 @@ public class FeedbackManager {
         this.nodeCore = nodeCore;
     }
 
+
+    public void receivedApproveOrReject(int id) {
+        int count = approveRejectIdMap.containsKey(id) ?approveRejectIdMap.get(id) : 0;
+        approveRejectIdMap.put(id, count + 1);
+
+        if (count >= nodeCore.getFeedbackThreshold())
+            return;
+
+        incrementFeedback();
+    }
 
     public void incrementFeedback() {
         feedbackCounter++;

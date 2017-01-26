@@ -99,6 +99,7 @@ public class AvaNodeProtocol extends AbstractBaseProtocol implements Runnable {
     @Override
     public void run() {
         try {
+
             //Syntaktische Analyse
             request = new AvaNodeProtocolRequest(this);
 
@@ -116,6 +117,7 @@ public class AvaNodeProtocol extends AbstractBaseProtocol implements Runnable {
             close();
             //Evaluierung
             //nodeCore.getTcpParallelServer().mutex.acquire();
+            nodeCore.getTcpParallelServer().mutex.acquire();
             Reply reply = command.execute(this);
 
 
