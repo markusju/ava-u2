@@ -23,7 +23,7 @@ public class GraphGenTest {
 
     @Test
     void constructTest() {
-        FileConfig.checkParams(100, 6, 3);
+        FileConfig.checkParams(101, 6, 3);
 
     }
 
