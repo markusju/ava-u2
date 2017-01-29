@@ -11,6 +11,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+
+
 public class GraphGenTest {
 
 
@@ -22,9 +26,11 @@ public class GraphGenTest {
     }
 
     @Test
-    void constructTest() {
-        FileConfig.checkParams(101, 6, 3);
-
+    void constructTest() throws FileNotFoundException, UnsupportedEncodingException {
+        //FileConfig.checkParams(100, 6, 3);
+        for (int i = 0; i < 1000 ; i++) {
+            FileConfig.genElectionDotFileWrapper(100, 6, 3);
+        }
     }
 
 

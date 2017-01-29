@@ -1,9 +1,14 @@
 package de.htwsaar.kim.ava.avanode.file;
 
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
 import de.htwsaar.kim.ava.avanode.application.NodeCore;
 import de.htwsaar.kim.ava.avanode.dot.Dot;
 import de.htwsaar.kim.ava.avanode.dot.Edge;
+import de.htwsaar.kim.ava.avanode.tests.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -198,8 +203,93 @@ public class FileConfig {
 
     }
 
-    public static void genElectionDotFile(int numOfParticpants, int numOfPartyFellows, int numOfFriends) throws FileNotFoundException, UnsupportedEncodingException {
 
+    private static List<Pair> processSequenceA(List<Pair> sequence, Dot dot) {
+        Pair d = sequence.get(0);
+
+        for (int i = 1; i <= d.getFirst() ; i++) {
+            if (sequence.get(i).getFirst() < 1)
+                throw new IllegalArgumentException("Not possible");
+        }
+
+        sequence.remove(0);
+
+        for (int i = 0; i < d.getFirst() ; i++) {
+            Pair pair = sequence.get(i);
+            pair.decrementFirst();
+            dot.addEdge(new Edge(d.getSecond(), pair.getSecond()));
+        }
+
+
+        sequence.sort(Pair::compareTo);
+        Collections.reverse(sequence);
+        return sequence;
+    }
+
+
+    private static boolean doneA(List<Pair> sequence) {
+        for (Pair i : sequence){
+            if (i.getFirst() != 0) return false;
+        }
+        return true;
+    }
+
+    public static void genElectionDotFileA(int numOfParticpants, int numOfPartyFellows, int numOfFriends) throws FileNotFoundException, UnsupportedEncodingException {
+        List<Integer> list = prepareSequence(numOfParticpants, numOfPartyFellows, numOfFriends);
+
+        List<Pair> map = new LinkedList<>();
+
+        Dot dot = new Dot();
+
+        int nodeCtr = 1;
+
+        for (Integer el : list) {
+            map.add(new Pair(el, nodeCtr));
+            nodeCtr++;
+        }
+
+
+        for (int i = 3; i<numOfPartyFellows+3; i++) {
+            map.get(0).decrementFirst();
+            dot.addEdge(new Edge(1, i));
+        }
+
+
+        for(int i = numOfPartyFellows+3; i < numOfPartyFellows+(numOfPartyFellows+3); i++) {
+            map.get(1).decrementFirst();
+            dot.addEdge(new Edge(2, i));
+        }
+
+
+        while (!doneA(map)) {
+            processSequenceA(map, dot);
+        }
+
+
+        System.out.println(dot);
+
+    }
+
+
+        public static void genElectionDotFileWrapper(int numOfParticpants, int numOfPartyFellows, int numOfFriends) throws FileNotFoundException, UnsupportedEncodingException {
+
+            int maxTries = 10;
+            int tries = 0;
+            while (tries < maxTries) {
+                try {
+                    genElectionDotFile(numOfParticpants, numOfPartyFellows, numOfFriends);
+                    return;
+                } catch (Exception e) {
+                    tries++;
+                }
+            }
+
+
+
+        }
+
+        public static void genElectionDotFile(int numOfParticpants, int numOfPartyFellows, int numOfFriends) throws Exception {
+        int runThreshold = 10000;
         int cand1 = 1;
         int cand2 = 2;
 
@@ -215,9 +305,12 @@ public class FileConfig {
             dot.addEdge(new Edge(cand2, i+numOfPartyFellows));
         }
 
+
+
         //Establish Friendships
-       for (int i= 3; i<=numOfParticpants; i++) {
+        for (int i= 3; i<=numOfParticpants; i++) {
             //Fill with Random nodes
+            int runs = 0;
             while (dot.getNumOfAdjacentNodes(i) < numOfFriends) {
                 ArrayList<Integer> excluded = new ArrayList<>();
                 excluded.add(i);
@@ -227,9 +320,11 @@ public class FileConfig {
                 if (dot.getNumOfAdjacentNodes(randNode) < numOfFriends) {
                     dot.addEdge(new Edge(i, randNode));
                 }
+                runs++;
+                if (runs > runThreshold) throw new Exception("Exceeded tries");
             }
 
-       }
+        }
 
         writeToFile("file.dot", dot);
 
@@ -319,7 +414,7 @@ public class FileConfig {
 
     }
 
-    public static void main(String ...args) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void main(String ...args) throws Exception {
         genElectionDotFile(
                 100,
                 6,
