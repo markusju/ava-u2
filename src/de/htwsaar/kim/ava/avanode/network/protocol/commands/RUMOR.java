@@ -28,20 +28,15 @@ public class RUMOR implements Command {
         List<String> messageList = protocol.getRequest().getMethodArguments();
         String message = String.join(" ", messageList);
         int source = protocol.getSource();
-        int vectime = Integer.valueOf(protocol.getRequest().getParameters().get("VECTIME"));
 
-        //Update Vectime for source
-        protocol.getNodeCore().getFileConfig().getEntryById(source).updateVectorTime(vectime);
 
         //Update/Add and retrieve Rumor
         protocol.getNodeCore().getDataStore().addRumor(message, source);
         Rumor rumor = protocol.getNodeCore().getDataStore().getRumor(message);
 
-        //Increment own vector time
-        protocol.getNodeCore().getFileConfig().getOwnEntry().incVectorTime();
 
         //Log
-        protocol.getNodeCore().getLogger().log(Level.INFO, "Received RUMOR "+rumor.getRumor()+" from "+source+". My Vectime: "+ protocol.getNodeCore().getFileConfig().getOwnEntry().getVectorTime()+" Far-end Vectime: "+vectime);
+        protocol.getNodeCore().getLogger().log(Level.INFO, "Received RUMOR "+rumor.getRumor()+" from "+source+". Current Vectime: "+ protocol.getNodeCore().getFileConfig().getVectorTimes());
 
         if (rumor.alreadyHeard()) {
             protocol.getNodeCore().getLogger().log(Level.INFO, "Not relaying RUMOR "+ rumor.getRumor()+". Already heard this.");
@@ -60,8 +55,6 @@ public class RUMOR implements Command {
                     if (rumor.inReceivedFrom(entry.getId()))
                         continue;
 
-                    //Increment own vector time
-                    protocol.getNodeCore().getFileConfig().getOwnEntry().incVectorTime();
 
                     protocol.getNodeCore().getTcpClient().sendRequest(
                             entry.getHost(),
