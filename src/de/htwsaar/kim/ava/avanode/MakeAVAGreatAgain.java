@@ -14,7 +14,7 @@ public class MakeAVAGreatAgain {
                 20,
                 6,
                 3,
-                false
+                true
         );
 
     }
