@@ -366,6 +366,17 @@ Dieser lässt sich über eine Methode inkrementieren und löst entsprechend eine
 In den Routinen zur Verarbeitung der `APPROVE` und `REJECT` Nachrichten der VOTEFORME-Aktion haben wir einen Aufruf von *incCounter()* integriert. Bei den CAMPAIG-Aktion lösen wir die Threshold-Aktion direkt bei Beendigung des ECHO-Algorithmus beim Initiator aus.
 
 ### Software-Architektur
-Die Übung wurde in Java realisiert, und ist durch das vorgegebene Sprache-Paradigma stark objektorientiert aufgebaut.
+Die Übung wurde in Java realisiert und ist durch das vorgegebene Sprachen-Paradigma stark objektorientiert aufgebaut.
 
+Eine Klasse `NodeCore` verankert alle Funktionalitäten eines Knoten und hält ensprechende Instanzen der Untermodule:
 
+* NodeCore
+    * nodeID
+    * nodeType
+    * feedhackThreshold
+    * TCP-Server
+    * TCP-Client
+    * Konfigurationsmodul (Adressen der anderen Nodes/Nachbarn)
+    * Datenhaltungsmodul (vgl. Einleitung)
+    * Logger-Modul
+    
