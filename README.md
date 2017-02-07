@@ -1,7 +1,7 @@
-# makingavagreatagain: Eine Implementierung von Übung 2
+# greatagain: Eine Implementierung von Übung 2
 Markus Jungbluth
 
-Dieses Dokument enthält Informationen über den Aufbau und die Funktionen von makingavagreatagain.
+Dieses Dokument enthält Informationen über den Aufbau und die Funktionen von greatagain.
 
 ## Einführung
 Das vorliegende Programm implementiert verschiedene Algorithmen im Bereich verteilter Anwendungen:
@@ -141,7 +141,7 @@ Nach Absetzen der Terminierungsanforderung handelt der Observer zunächst mit al
     06.02.2017 16:00:48 [0] - INFORMATION: Votes for 2: 11
 
 ### Protokoll
-makingavagreatagain greift auf die Protokoll-Implementierung der vorhergehenden Übungen zurück und verwendet ein auf TCP/IP basierendes einfaches ASCII-basiertes Kommunikationsprotokoll.
+greatagain greift auf die Protokoll-Implementierung der vorhergehenden Übungen zurück und verwendet ein auf TCP/IP basierendes einfaches ASCII-basiertes Kommunikationsprotokoll.
 Das verwendete Protokoll wird dabei nur zur unidirektionalen Kommunikation verwendet. Das bedeutet, dass eine sendender Client keine direkte Rückmeldung vom Server über die Ausführung des Kommandos erhält.
 
     <Methode> <MethodenArgument>
