@@ -144,6 +144,10 @@ Nach Absetzen der Terminierungsanforderung handelt der Observer zunächst mit al
 makingavagreatagain greift auf die Protokollimplementierung der vorhergehenden Übungen zurück und verwendet ein auf TCP/IP basierendes einfaches ASCII-basiertes Kommunikationsprotokoll.
 Das verwendete Protokoll wird dabei nur zur unidirektionalen Kommunikation verwendet. Das bedeutet, dass eine sendender Client keine direkte Rückmeldung vom Server über die Ausführung des Kommandos erhält.
 
+    <Methode> <MethodenArgument>
+    <ParamKey>: <ParamValue
+    ...
+
 #### Methoden
 Alle Nachrichten bestehen zwangsläufig aus einer sog. *Methode*.
 Die Methode ist ein Bezeichner für das auszuführende Kommando.
@@ -182,11 +186,107 @@ Weiterhin wird die Vektor-Zeit über einen "VECTIME" Parameter übertragen.
 Im nachfolgenden werden die Implementierungsdetails der einzelnene Algorithmen erläutert.
 
 #### Flooding
-Der Flooding-Algorithmus wird zu Verteilung von `VOTEFORME` Nachrichten genutzt. Er zielt darauf ab, eine Nachricht möglichst schnell in einem Netz zu verteilen. Im vorliegenden Programm, wurde er um eine Quittierung ergänzt, die es dem Initiator des Floodings erlaubt, zu messen, wie viele Teilnehmer seine Nachricht erreicht hat.
+Der Flooding-Algorithmus wird zu Verteilung von `VOTEFORME` Nachrichten genutzt. Er zielt darauf ab, eine Nachricht möglichst schnell in einem Netz zu verteilen. Im vorliegenden Programm wurde er um eine Quittierung ergänzt, die es dem Initiator des Floodings erlaubt, zu messen, wie viele Teilnehmer seine Nachricht erreicht hat.
+
+Verwendete Protokoll-Methoden: `STARTVOTEFORME`, `VOTEFORME`, `APPROVE`, `REJECT`
+
+Der Flooding-Algorithmus wurde im vorliegenden Programm wie folgt implementiert:
+
+###### Initiator
+    if not candidate:
+        raise Error("Must be candidate to initiate")
+    
+    for my_party_fellows_id in nodes:
+        send(my_party_fellows_id, VOTEFORME, myId, uniqueVoteformeId)
+        
+Ein Initiator-Knoten -also der Kandidat- bestimmt zunächst einen eindeutigen Identifizierer für seine Wähl-Mich Aktion. Anschließend sendet er ein `VOTEFORME` Kommando an seine Partei-Freunde. Diese und alle anderen Knoten verteilen die Aktion anschließend gemäß der Vorschriften aus unten stehendem Pseudo-Code:
+###### Restliche Knoten
+    if candidate:
+        raise Error("Cannot be candidate for this")
+     
+     (method, candidateId, uniqueVoteformeId) = recv()
+     
+     if (already_seen(uniqueVoteformeId)):
+        raise Warning("I have seen this already")
+        return
+        
+     if i_approve_this_candidate():
+        send(candidateId, APPROVE, uniqueVoteformeId)
+     else:
+        send(candidateId, REJECT, uniqueVoteformeId)
+        return
+     
+     for my_friends_id_except_source in nodes:
+        send(my_friends_id, VOTEFORME, candidateId, uniqueVoteformeId)
+        
+Hier wird zunächst die Nachricht empfangen und ihre Parameter werden aufgeschlüsselt. Im nächsten Schritt prüft der Knoten, ob er den eindeutigen Identifizierer der Aktuíon bereits gesehen hat. Ist dies der Fall bricht er ab und verabeitet das Kommando nicht weiter.
+
+Ist der aktuelle Knoten vom Kandidaten überzeugt, der die Aktion initiert hat, sendet er ihm eine Bestätigung in Form einer `APPROVE` Nachricht. Ist er nicht vom Kandidaten signalisiert der Knoten dem Kandidaten mit einer `REJECT` Nachricht seinen Unmut. In diesem Fall bricht er ab und verarbeitet das Kommando nicht weiter.
+ 
+Trifft die Aktion des Kandidaten die Zustimmung des Knotens, so verteilter die Aktion weiter an seine Freunde. (außer an den Knoten, von dem er die Nachricht erhalten hat)
 #### Echo
+Der Echo-Algorithmus wird zu Verteilung von `CAMPAIGN` Nachrichten verwendet. Er zielt darauf auf ab, alle Teilnehmer in einem Netz zu erreichen und zu bestätigen, dass tatsächlich alle Teilnehmer die Nachrichte erhalten haben. Anders als beim Flooding erhält der Initiator die Quittierung nicht direkt von dem angesprochenen Node, sondern indirekt.
+
+
+Verwendete Protokoll-Methoden: `STARTCAMPAIGN`, `CAMPAIGN`
+
+
+Der Echo-Algorithmus wurde wie folgt implementiert:
+
+###### Initiator
+    if not a candidate:
+        raise Error("Must be candidate to initiate")
+    
+    if state != WHITE:
+        raise Error("Invalid State for init")
+    
+    state = RED
+    
+    uniqueCampaignId = genId()
+       
+    for partyFellow_id in nodes:
+        send(partyFellow_id, CAMPAIGN, myId, uniqueCampaignId)
+    
+Ein Initiator-Knoten -also ein Kandidat- startet die Kampagne in dem er seinen eigenen Zustand von WHITE zu RED ändert, Anschöießend sendet er allen seinen Partei-Freunden eine `CAMPAIGN`Nachricht mit einer eindeutigen, gleichbleibenden campaignId.
+
+###### Restliche
+    (source, candId, campaignId) = recv()
+
+    //EXPLORER
+    if (state == WHITE and not a candidate):
+        state = RED
+        firstNeighbor = source
+        
+        for neighbors_id in nodes:
+            send(neighbors_id, CAMPAIGN, candId, campaignId)
+               
+    msgCounter += 1
+     
+    //ECHO
+    if (msgCounter == numOfNeighbors):
+        state = GREEN
+        
+        if (ownId == candId):
+            msgCounter = 0
+            state = WHITE
+            triggerFeedback()
+            return
+            
+        send(firstNeighbor, CAMPAIGN, candId, campaignId)
+        msgCounter = 0
+        state = WHITE
+
+Die restlichen Knoten verarbeiten die ankommenden `CAMPAIGN`Nachrichten gemäß des obenstehenden Pseudo-Codes. Abhängig vom Zustand des Nodes werden die ankommenden Nachrichten entweder als *EXPLORER* oder *ECHO* implementiert.
+
+Ist der Zustand des Knotens WHITE, so interpretiert er die Nachricht als EXPLORER. Er setzt dann seinen Zustand auf RED und sichert die ID des ersten Nachbarn von dem er die Nachricht erhalten hat (firstNeighbor). Anschließend zählt er den msgCounter hoch.
+Nach dem er eine EXPLORER Nachricht erhalten hat, werden alle weiteren NAchrichten gezählt, die der Knoten von allen anderen erhält. Erreicht der msgCounter die Zahl der Nachbarn des Knoten, dann ist die Nachricht vollständig an die Umgebung übertragen worden. Der Knoten löst dann den ECHO-Mechanismus aus und bestätigt dem ersten Nachbarn über den er die Kampagne erhalten hat, dass die Nachricht an alle seine Nachbarn übertragen wurde.
+
+Anschließend setzt der Konten seinen Zustand zurück auf WHITE und den msgCounter auf 0. Handelt es sich bei dem Konten um den Initiator, so löst er zusätzlich den Feedback-Mechanismus für eine erneute Wahlkampfaktion aus.
 
 #### Terminierung
 
+
+#### Feedback-Mechanismus
 
 
 
