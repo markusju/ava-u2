@@ -145,7 +145,7 @@ makingavagreatagain greift auf die Protokoll-Implementierung der vorhergehenden 
 Das verwendete Protokoll wird dabei nur zur unidirektionalen Kommunikation verwendet. Das bedeutet, dass eine sendender Client keine direkte Rückmeldung vom Server über die Ausführung des Kommandos erhält.
 
     <Methode> <MethodenArgument>
-    <ParamKey>: <ParamValue
+    <ParamKey>: <ParamValue>
     ...
 
 #### Methoden
