@@ -286,9 +286,32 @@ Anschließend setzt der Konten seinen Zustand zurück auf WHITE und den msgCount
 #### Terminierung
 
 
+
+
 #### Feedback-Mechanismus
+Damit die Kandidaten in periodischen Abständen immer wieder neue Wahlkampfkationen starten, wurde ein Feedback-Mechanismus implementiert. Dieser wählt bei Auslösung eine zufällig Wahlkampfaktion (CAMPAIGN oder VOTEFORME) und löst sie durch eine entsprechende Initiator-Nachricht am jeweiligen Kandidaten aus.
 
+Hierbei mussten wir einige Besonderheiten beachten:
 
+Es war gefordert, dass ein Kandidat nach *r* Rückmeldungen eine neue Aktion startet. Wir haben deshalb einen Counter mit entsprechender Übeprüfungsroutine implementiert:
+
+    counter = 0
+    r = 6
+    
+    def incCounter():
+        counter += 1
+        if (counter % 6 == 0):
+            triggerThreshold()
+   
+    def incToThreshold():
+        counter += r
+    
+    def triggerThreshold():
+        startRandomAction()
+        
+Dieser lässt sich über eine Methode inkrementieren und löst entsprechend eine neue Aktion aus, wenn der definierte Schwellwert *r* überschritten wurde.
+
+In den Routinen zur Verarbeitung der `APPROVE`und `REJECT` Nachrichten der VOTEFORME-Aktion haben wir einen Aufruf von *incCounter()* integriert. Bei den CAMPAIG-Aktion lösen wir die Threshold-Aktion direkt bei Beendigung des ECHO-Algorithmus beim Initiator aus.
 
 ### Software-Architektur
 Die Übung wurde in Java realisiert, und ist durch das vorgegebene Sprache-Paradigma stark objektorientiert aufgebaut.
